@@ -202,7 +202,28 @@ hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
 <script>
 "use strict";
 
-const SUBJECTS = ["英語","国語","数学","世界史","地理","理科","情報Ⅰ"];
+const DEFAULT_SUBJECTS = [
+  "英語", "国語", "数学", "世界史", "地理", "理科", "情報Ⅰ"
+];
+
+let SUBJECTS = (() => {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem("studyPlannerSubjects")
+    );
+
+    if (
+      Array.isArray(saved) &&
+      saved.length > 0 &&
+      saved.every(s => typeof s === "string" && s.trim() !== "") &&
+      new Set(saved).size === saved.length
+    ) {
+      return saved;
+    }
+  } catch (e) {}
+
+  return [...DEFAULT_SUBJECTS];
+})();
 const DEFAULT_COLORS = {
   "英語":"#5275EF",
   "国語":"#35B7A1",
@@ -327,7 +348,9 @@ function validColor(value){
   return /^#[0-9a-fA-F]{6}$/.test(value||"");
 }
 function getColor(subject){
-  return validColor(data.colors[subject]) ? data.colors[subject] : DEFAULT_COLORS[subject];
+  return validColor(data.colors[subject])
+    ? data.colors[subject]
+    : (DEFAULT_COLORS[subject] || "#7C8DA6");
 }
 function showTab(id){
   document.querySelectorAll("body>section").forEach(el=>{
@@ -343,7 +366,77 @@ function populateSelect(id){
     `<option value="${esc(s)}">${esc(s)}</option>`
   ).join("");
 }
+function renderSubjectManager() {
+  const container = document.getElementById("subjectManager");
+  if (!container) return;
 
+  container.innerHTML = "";
+
+  SUBJECTS.forEach(subject => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.style.marginTop = "8px";
+
+    const name = document.createElement("span");
+    name.textContent = subject;
+    name.style.flex = "1";
+
+    const button = document.createElement("button");
+    button.textContent = "削除";
+    button.type = "button";
+    button.onclick = () => deleteSubject(subject);
+
+    row.append(name, button);
+    container.appendChild(row);
+  });
+}
+
+function addSubject() {
+  const input = document.getElementById("newSubject");
+  const name = input.value.trim();
+
+  if (!name) {
+    alert("教科名を入力してね。");
+    return;
+  }
+
+  if (SUBJECTS.includes(name)) {
+    alert("その教科はすでに登録されているよ。");
+    return;
+  }
+
+  SUBJECTS.push(name);
+  localStorage.setItem("studyPlannerSubjects", JSON.stringify(SUBJECTS));
+
+  data.goals[name] = data.goals[name] ?? 5;
+  data.colors[name] = data.colors[name] ?? "#7C8DA6";
+
+  saveData();
+  input.value = "";
+
+  populateSelect("timerSubject");
+  populateSelect("taskSubject");
+  renderSubjectManager();
+  render();
+}
+
+function deleteSubject(name) {
+  if (SUBJECTS.length <= 1) {
+    alert("最後の1教科は削除できないよ。");
+    return;
+  }
+
+  if (!confirm(`「${name}」を教科一覧から削除する？`)) return;
+
+  SUBJECTS = SUBJECTS.filter(subject => subject !== name);
+  localStorage.setItem("studyPlannerSubjects", JSON.stringify(SUBJECTS));
+
+  saveData();
+  populateSelect("timerSubject");
+  populateSelect("taskSubject");
+  renderSubjectManager();
+  render();
+}
 function donutSvg(percent,color,label,size=116){
   const p = Math.max(0,Math.min(100,Number(percent)||0));
   const r = 39, circumference = 2*Math.PI*r;
@@ -603,6 +696,7 @@ function importData(event){
 // 初期化
 populateSelect("timerSubject");
 populateSelect("taskSubject");
+renderSubjectManager();
 rolloverWeek();
 render();
 
