@@ -549,8 +549,9 @@ function render(){
   role="button"
   tabindex="0"
   aria-label="${esc(s)}のタイマーを開始"
-  onclick="startSubjectTimer(${JSON.stringify(s)})"
-  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startSubjectTimer(${JSON.stringify(s)});}">
+  data-subject="${esc(s)}"
+  onclick="startSubjectTimer(this.dataset.subject)"
+  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startSubjectTimer(this.dataset.subject);}">
       ${donutSvg(pct,getColor(s),s,116)}
       <div class="name">${esc(s)}</div>
       <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
