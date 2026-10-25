@@ -614,5 +614,185 @@ document.addEventListener("visibilitychange",()=>{
   );
 </script>
 
+<!-- アカウント機能 -->
+<section id="account-panel" style="
+  max-width: 440px;
+  margin: 24px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  font-family: sans-serif;
+">
+  <h2>📚 学習アカウント</h2>
+  <p>アカウントを作って、学習記録を管理しよう。</p>
+
+  <form id="signup-form">
+    <h3>新規登録</h3>
+
+    <label for="signup-name">表示名</label>
+    <input id="signup-name" type="text" maxlength="40"
+      required autocomplete="nickname"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="signup-email">メールアドレス</label>
+    <input id="signup-email" type="email" required
+      autocomplete="email"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="signup-password">パスワード（8文字以上）</label>
+    <input id="signup-password" type="password" required minlength="8"
+      autocomplete="new-password"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <button type="submit" style="padding:10px 16px;">新規登録</button>
+  </form>
+
+  <hr style="margin:24px 0;">
+
+  <form id="login-form">
+    <h3>ログイン</h3>
+
+    <label for="login-email">メールアドレス</label>
+    <input id="login-email" type="email" required
+      autocomplete="email"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="login-password">パスワード</label>
+    <input id="login-password" type="password" required
+      autocomplete="current-password"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <button type="submit" style="padding:10px 16px;">ログイン</button>
+  </form>
+
+  <div id="account-status" role="status" aria-live="polite"
+    style="margin-top:18px;overflow-wrap:anywhere;">
+    ログインしていません。
+  </div>
+
+  <button id="logout-button" type="button" hidden
+    style="padding:10px 16px;margin-top:10px;">
+    ログアウト
+  </button>
+</section>
+
+<script>
+(() => {
+  const status = document.getElementById("account-status");
+  const logoutButton = document.getElementById("logout-button");
+  const signupForm = document.getElementById("signup-form");
+  const loginForm = document.getElementById("login-form");
+
+  function showMessage(message) {
+    status.textContent = message;
+  }
+
+  function setLoggedIn(user) {
+    if (user) {
+      showMessage("ログイン中：" + user.email);
+      logoutButton.hidden = false;
+    } else {
+      showMessage("ログインしていません。");
+      logoutButton.hidden = true;
+    }
+  }
+
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const displayName =
+      document.getElementById("signup-name").value.trim();
+    const email =
+      document.getElementById("signup-email").value.trim();
+    const password =
+      document.getElementById("signup-password").value;
+
+    if (!displayName) {
+      showMessage("表示名を入力してください。");
+      return;
+    }
+
+    showMessage("登録しています…");
+
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        setLoggedIn(data.user);
+        showMessage("登録できました！ログイン中：" + data.user.email);
+      } else {
+        showMessage(
+          "登録を受け付けました。確認メールが届いたら、メール内のリンクを開いてください。"
+        );
+      }
+    } catch (error) {
+      showMessage("登録できませんでした：" + error.message);
+    }
+  });
+
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email =
+      document.getElementById("login-email").value.trim();
+    const password =
+      document.getElementById("login-password").value;
+
+    showMessage("ログインしています…");
+
+    try {
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) throw error;
+
+      setLoggedIn(data.user);
+      loginForm.reset();
+    } catch (error) {
+      showMessage("ログインできませんでした：" + error.message);
+    }
+  });
+
+  logoutButton.addEventListener("click", async () => {
+    showMessage("ログアウトしています…");
+
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+
+      setLoggedIn(null);
+    } catch (error) {
+      showMessage("ログアウトできませんでした：" + error.message);
+    }
+  });
+
+  // ページを開いたとき、ログイン状態を確認
+  supabaseClient.auth.getUser().then(({ data, error }) => {
+    if (error) {
+      showMessage("ログイン状態を確認できませんでした。");
+      return;
+    }
+
+    setLoggedIn(data.user);
+  });
+
+  // ログイン状態の変化を画面に反映
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    setLoggedIn(session?.user ?? null);
+  });
+})();
+</script>
+
 </body>
 </html>
