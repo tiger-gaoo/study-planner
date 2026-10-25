@@ -94,23 +94,31 @@ hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
   <div class="card">
     <h2>今週の学習</h2>
     <div class="card">
-  <h2>⏱️ すぐに学習スタート</h2>
+  
+<div class="card">
+  <h2>⏱️ 学習タイマー</h2>
+  <p class="muted">左右にスワイプして科目を切り替えよう。</p>
 
-  <label for="homeTimerSubject">科目</label>
-  <select id="homeTimerSubject" onchange="syncTimerSubject(this.value)"></select>
+  <div id="mainTimerCarousel"
+       style="text-align:center;touch-action:pan-y;user-select:none;">
+    <button class="secondary"
+            onclick="changeMainSubject(-1)"
+            aria-label="前の科目">❮</button>
 
-  <div class="timer" id="homeClock">00:00:00</div>
+    <div id="mainTimerDonut"
+         style="display:inline-block;vertical-align:middle;margin:0 8px;">
+    </div>
 
-  <div class="actions">
-    <button onclick="startTimer()">スタート</button>
-    <button class="secondary" onclick="pauseTimer()">停止して記録</button>
-    <button class="secondary" onclick="resetTimer()">リセット</button>
+    <button class="secondary"
+            onclick="changeMainSubject(1)"
+            aria-label="次の科目">❯</button>
   </div>
 
-  <p class="muted">
-    下の科目別グラフをタップしても、すぐに計測を始められるよ。
+  <p id="mainTimerStatus" class="muted" style="text-align:center;">
+    円グラフをタップすると計測開始・停止
   </p>
 </div>
+
     <div class="row">
       <div><div class="muted">学習時間</div><div class="stat" id="totalTime">0分</div></div>
       <div><div class="muted">タスク達成</div><div class="stat" id="taskProgress">0/0</div></div>
@@ -593,8 +601,8 @@ function render(){
   tabindex="0"
   aria-label="${esc(s)}のタイマーを開始"
   data-subject="${esc(s)}"
-  onclick="startSubjectTimer(this.dataset.subject)"
-  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startSubjectTimer(this.dataset.subject);}">
+  onclick="handleMainSubjectTap(this.dataset.subject)"
+onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleMainSubjectTap(this.dataset.subject);}"
       ${donutSvg(pct,getColor(s),s,116)}
       <div class="name">${esc(s)}</div>
       <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
@@ -731,6 +739,7 @@ function updateClock() {
   if (homeClock) {
     homeClock.textContent = text;
   }
+  renderMainTimerDonut();
 }
 
 function syncTimerSubject(subject) {
@@ -782,6 +791,121 @@ function pauseTimer(){
   elapsedBefore=0;
   document.getElementById("startBtn").textContent="スタート";
   updateClock();render();
+}
+  
+function toggleStudyTimer() {
+  if (running) {
+    pauseTimer();
+  } else {
+    startTimer();
+  }
+}
+  
+let mainTimerSwipeReady = false;
+let mainTimerTouchStartX = 0;
+
+function renderMainTimerDonut() {
+  const container = document.getElementById("mainTimerDonut");
+  if (!container) return;
+
+  const select = document.getElementById("timerSubject");
+  if (!select || !select.value) return;
+
+  const subject = select.value;
+  const log = currentLog();
+  const sec = Number(log[subject]) || 0;
+  const goal = Math.max(0, Number(data.goals[subject]) || 0) * 3600;
+  const pct = goal > 0
+    ? Math.min(100, sec / goal * 100)
+    : (sec > 0 ? 100 : 0);
+
+  const timerText = clockText(elapsedSeconds());
+
+  container.innerHTML = `
+    <div role="button"
+         tabindex="0"
+         aria-label="${esc(subject)}のタイマー"
+         style="cursor:pointer;display:inline-block;"
+         onclick="toggleStudyTimer()"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStudyTimer();}">
+      ${donutSvg(pct, getColor(subject), subject, 220, timerText)}
+    </div>
+  `;
+
+  const status = document.getElementById("mainTimerStatus");
+  if (status) {
+    status.textContent = running
+      ? "計測中：円グラフをタップすると停止して記録"
+      : "停止中：円グラフをタップすると計測開始";
+  }
+
+  if (!mainTimerSwipeReady) {
+    const carousel = document.getElementById("mainTimerCarousel");
+    if (carousel) {
+      carousel.addEventListener("touchstart", event => {
+        mainTimerTouchStartX = event.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener("touchend", event => {
+        const endX = event.changedTouches[0].screenX;
+        const diff = endX - mainTimerTouchStartX;
+
+        if (Math.abs(diff) > 50) {
+          changeMainSubject(diff < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+
+      mainTimerSwipeReady = true;
+    }
+  }
+}
+
+function changeMainSubject(direction) {
+  if (!Array.isArray(SUBJECTS) || SUBJECTS.length === 0) return;
+
+  const select = document.getElementById("timerSubject");
+  if (!select) return;
+
+  const currentIndex = SUBJECTS.indexOf(select.value);
+  const safeIndex = currentIndex < 0 ? 0 : currentIndex;
+  const nextIndex =
+    (safeIndex + direction + SUBJECTS.length) % SUBJECTS.length;
+  const nextSubject = SUBJECTS[nextIndex];
+
+  if (nextSubject === select.value) return;
+
+  if (running) {
+    pauseTimer();
+  }
+
+  select.value = nextSubject;
+
+  const homeSelect = document.getElementById("homeTimerSubject");
+  if (homeSelect) homeSelect.value = nextSubject;
+
+  elapsedBefore = 0;
+  updateClock();
+  renderMainTimerDonut();
+}
+
+function handleMainSubjectTap(subject) {
+  if (!SUBJECTS.includes(subject)) return;
+
+  const timerSelect = document.getElementById("timerSubject");
+
+  if (timerSelect.value !== subject) {
+    if (running) {
+      pauseTimer();
+    }
+
+    timerSelect.value = subject;
+    elapsedBefore = 0;
+    updateClock();
+    render();
+    return;
+  }
+
+  toggleStudyTimer();
 }
 function resetTimer(){
   running=false;
