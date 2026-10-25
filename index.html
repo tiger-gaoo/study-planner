@@ -592,23 +592,28 @@ function render(){
     return `<div class="legend-item"><span class="dot" style="background:${getColor(s)}"></span><span>${esc(s)}：${minutesText(sec)}（${share}%）</span></div>`;
   }).join("");
 
+  
   document.getElementById("subjectGrid").innerHTML = SUBJECTS.map(s=>{
-    const sec=log[s]||0;
-    const goal=Math.max(0,Number(data.goals[s])||0)*3600;
-    const pct=goal>0 ? Math.min(100,sec/goal*100) : (sec>0?100:0);
+    const sec = log[s] || 0;
+    const goal = Math.max(0, Number(data.goals[s]) || 0) * 3600;
+    const pct = goal > 0 ? Math.min(100, sec / goal * 100) : (sec > 0 ? 100 : 0);
+
     return `<div class="subject-card"
-  role="button"
-  tabindex="0"
-  aria-label="${esc(s)}のタイマーを開始"
-  data-subject="${esc(s)}"
-  onclick="handleMainSubjectTap(this.dataset.subject)"
-onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleMainSubjectTap(this.dataset.subject);}"
-      ${donutSvg(pct,getColor(s),s,116)}
+      role="button"
+      tabindex="0"
+      aria-label="${esc(s)}のタイマーを開始"
+      data-subject="${esc(s)}"
+      onclick="handleMainSubjectTap(this.dataset.subject)"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleMainSubjectTap(this.dataset.subject)}">
+      ${donutSvg(pct, getColor(s), s, 116)}
       <div class="name">${esc(s)}</div>
       <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
-      <div class="track" style="margin-top:8px"><div style="width:${pct}%;background:${getColor(s)}"></div></div>
+      <div class="track" style="margin-top:8px">
+        <div style="width:${pct}%;background:${getColor(s)}"></div>
+      </div>
     </div>`;
   }).join("");
+
 
   document.getElementById("allSubjectsGrid").innerHTML = SUBJECTS.map(s => {
     const sec = log[s] || 0;
@@ -667,6 +672,7 @@ onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handl
     </div>`
   ).join("");
   document.getElementById("settingsPreview").innerHTML=totalDonutSvg(log);
+  renderMainTimerDonut();
 }
 
 function addTask(){
