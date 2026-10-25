@@ -600,5 +600,19 @@ document.addEventListener("visibilitychange",()=>{
   }
 });
 </script>
+  
+<!-- SupabaseのJavaScriptライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://wcmtrkimrxjfnoeevkqu.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_GkTZ7Mb6HNEKtsD_uCVPSA_W-wev20w";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+</script>
+
 </body>
 </html>
