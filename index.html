@@ -672,7 +672,12 @@ function render(){
     </div>`
   ).join("");
   document.getElementById("settingsPreview").innerHTML=totalDonutSvg(log);
-  renderMainTimerDonut();
+  const timerSelect = document.getElementById("timerSubject");
+if (timerSelect && !timerSelect.value && SUBJECTS.length > 0) {
+  timerSelect.value = SUBJECTS[0];
+}
+
+renderMainTimerDonut();
 }
 
 function addTask(){
