@@ -4,179 +4,601 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f6fb">
 <title>共通テスト 学習プランナー</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;color:#243047;background:#f3f6fb}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;color:#26334b;background:#f4f6fb}
 *{box-sizing:border-box}
-body{margin:0;padding:18px 14px 36px;max-width:760px;margin-inline:auto}
-h1{font-size:25px;margin:8px 0}
+body{margin:0;padding:20px 14px 42px;max-width:800px;margin-inline:auto}
+h1{font-size:25px;margin:10px 0 5px}
 h2{font-size:19px;margin:0 0 14px}
-.sub{color:#65718a;font-size:13px}
-nav{display:flex;gap:7px;overflow:auto;margin:18px 0}
-nav button{white-space:nowrap;flex:1}
-button{border:0;border-radius:11px;background:#315de8;color:white;padding:11px 13px;font-size:14px;font-weight:650;cursor:pointer}
-button.secondary{background:#e8edfa;color:#29416f}
-button.danger{background:#ffeded;color:#a83232}
-.card{background:white;border-radius:17px;padding:17px;margin:12px 0;box-shadow:0 3px 15px #2430470b}
-input,select{font:inherit;border:1px solid #d7deea;border-radius:10px;padding:11px;width:100%;background:white;color:#243047}
-label{font-size:13px;color:#65718a;display:block;margin:9px 0 5px}
-.row{display:flex;gap:8px;align-items:center}
+h3{font-size:15px;margin:0 0 10px}
+p{line-height:1.6}
+button,input,select{font:inherit}
+button{border:0;border-radius:12px;background:#4169e1;color:white;padding:11px 14px;font-weight:650;cursor:pointer}
+button:active{opacity:.8}
+button.secondary{background:#e8edf9;color:#304a83}
+button.danger{background:#fff0f0;color:#a52d3a;padding:8px 10px}
+button:disabled{opacity:.45}
+nav{display:flex;gap:7px;overflow-x:auto;margin:20px 0 16px;padding-bottom:3px}
+nav button{flex:0 0 auto;white-space:nowrap}
+.card{background:white;border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 3px 16px #2430470a}
+.muted{color:#78849a;font-size:13px}
+.pill{display:inline-block;padding:5px 10px;border-radius:30px;background:#e9efff;color:#3157b7;font-size:12px}
+.row{display:flex;gap:10px;align-items:center}
 .row>*{min-width:0;flex:1}
+label{display:block;color:#69758b;font-size:13px;margin:10px 0 5px}
+input:not([type=checkbox]):not([type=color]):not([type=file]),select{width:100%;border:1px solid #d8dfeb;border-radius:10px;padding:11px;background:white;color:#26334b}
+input[type=color]{width:48px;height:42px;border:0;background:none;padding:0;cursor:pointer}
+input[type=checkbox]{width:21px;height:21px;accent-color:#4169e1}
 .stat{font-size:27px;font-weight:750;margin:5px 0}
-.pill{display:inline-block;background:#edf1ff;color:#315de8;padding:5px 9px;border-radius:99px;font-size:12px}
-.task{display:flex;gap:10px;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0}
+.track{height:8px;background:#e9edf4;border-radius:20px;overflow:hidden}
+.track>div{height:100%;border-radius:20px;transition:width .25s}
+.subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.subject-card{background:#f8f9fc;border:1px solid #edf0f6;border-radius:15px;padding:12px 8px;text-align:center;min-width:0}
+.subject-card svg{width:min(100%,120px);height:auto;display:block;margin:0 auto 4px}
+.subject-card .name{font-weight:700;font-size:15px}
+.subject-card .detail{font-size:12px;color:#78849a;margin-top:5px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0}
+.dot{width:11px;height:11px;border-radius:4px;flex:0 0 auto}
+.legend-item span:last-child{overflow-wrap:anywhere}
+.task{display:flex;gap:9px;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0}
 .task:last-child{border-bottom:0}
-.task span{flex:1;overflow-wrap:anywhere}
-.task.done span{text-decoration:line-through;color:#9aa3b4}
-.subject{display:flex;justify-content:space-between;gap:8px;margin:12px 0 5px}
-.track{height:8px;background:#edf0f5;border-radius:20px;overflow:hidden}
-.track div{height:100%;background:#5275ef;border-radius:20px}
-.timer{font-size:48px;text-align:center;font-weight:750;font-variant-numeric:tabular-nums;padding:18px 0}
-.hidden{display:none}
-.small{font-size:12px;color:#7b8597}
+.task .task-title{flex:1;overflow-wrap:anywhere}
+.task.done .task-title{text-decoration:line-through;color:#9aa3b4}
+.timer{font-size:43px;text-align:center;font-weight:750;font-variant-numeric:tabular-nums;padding:20px 0}
+.hidden{display:none!important}
+.color-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #edf0f5}
+.color-row:last-child{border-bottom:0}
+.color-row .subject-name{flex:1}
+.color-row .hex{width:104px!important;padding:9px!important;font-size:13px}
+.full{width:100%}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{flex:1}
+hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
+@media(min-width:580px){.subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
 <header>
   <span class="pill">MY STUDY PLAN</span>
   <h1>共通テスト 学習プランナー 📚</h1>
-  <div class="sub" id="weekLabel"></div>
+  <div class="muted" id="weekLabel">日本時間で週を管理</div>
 </header>
+
 <nav>
-  <button onclick="show('home')">ホーム</button>
-  <button class="secondary" onclick="show('timer')">タイマー</button>
-  <button class="secondary" onclick="show('tasks')">タスク</button>
-  <button class="secondary" onclick="show('goals')">週間目標</button>
-  <button class="secondary" onclick="show('history')">学習記録</button>
+  <button data-tab="home" onclick="showTab('home')">ホーム</button>
+  <button class="secondary" data-tab="timer" onclick="showTab('timer')">タイマー</button>
+  <button class="secondary" data-tab="tasks" onclick="showTab('tasks')">タスク</button>
+  <button class="secondary" data-tab="goals" onclick="showTab('goals')">週間目標</button>
+  <button class="secondary" data-tab="history" onclick="showTab('history')">学習履歴</button>
+  <button class="secondary" data-tab="settings" onclick="showTab('settings')">🎨 デザイン</button>
 </nav>
+
 <section id="home">
   <div class="card">
     <h2>今週の学習</h2>
     <div class="row">
-      <div><div class="sub">今週の合計</div><div class="stat" id="total">0分</div></div>
-      <div><div class="sub">タスク達成</div><div class="stat" id="doneCount">0/0</div></div>
+      <div><div class="muted">学習時間</div><div class="stat" id="totalTime">0分</div></div>
+      <div><div class="muted">タスク達成</div><div class="stat" id="taskProgress">0/0</div></div>
     </div>
-    <div class="track"><div id="overallBar" style="width:0%"></div></div>
-    <p class="small">目標に向かって、今日も一歩ずつ！</p>
+    <div class="track"><div id="overallBar" style="width:0%;background:#4169e1"></div></div>
+    <p class="muted" id="goalSummary">週間目標に向かって進もう！</p>
   </div>
-  <div class="card"><h2>科目別の進み具合</h2><div id="homeSubjects"></div></div>
-  <div class="card"><h2>未完了タスク</h2><div id="homeTasks"></div></div>
+
+  <div class="card">
+    <h2>科目別の学習時間の割合</h2>
+    <p class="muted">今週、どの科目にどれくらい時間を使ったかが分かるよ。</p>
+    <div id="totalDonut"></div>
+    <div id="totalLegend" class="legend"></div>
+  </div>
+
+  <div class="card">
+    <h2>科目ごとの週間目標達成率</h2>
+    <p class="muted">円グラフの色が進捗を表すよ。目標を達成すると100%になるよ。</p>
+    <div id="subjectGrid" class="subject-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>未完了のタスク</h2>
+    <div id="homeTasks"></div>
+    <button class="secondary full" onclick="showTab('tasks')">タスクを管理する</button>
+  </div>
 </section>
+
 <section id="timer" class="hidden">
   <div class="card">
     <h2>学習タイマー</h2>
-    <label>科目</label><select id="timerSubject"></select>
+    <label for="timerSubject">科目</label>
+    <select id="timerSubject"></select>
     <div class="timer" id="clock">00:00:00</div>
-    <div class="row">
+    <div class="actions">
       <button id="startBtn" onclick="startTimer()">スタート</button>
-      <button class="secondary" onclick="pauseTimer()">一時停止</button>
+      <button class="secondary" onclick="pauseTimer()">停止して記録</button>
       <button class="secondary" onclick="resetTimer()">リセット</button>
     </div>
-    <p class="small">スタートした時間を計測し、停止時に今週の記録へ加算します。</p>
+    <p class="muted">「停止して記録」を押すと、その科目の今週の学習時間に加算されるよ。</p>
   </div>
 </section>
+
 <section id="tasks" class="hidden">
   <div class="card">
     <h2>タスクを追加</h2>
-    <label>やること</label><input id="taskName" placeholder="例：英単語を50個覚える">
+    <label for="taskName">やること</label>
+    <input id="taskName" placeholder="例：英単語を50個覚える">
     <div class="row">
-      <div><label>科目</label><select id="taskSubject"></select></div>
-      <div><label>期限（任意）</label><input type="date" id="taskDate"></div>
+      <div><label for="taskSubject">科目</label><select id="taskSubject"></select></div>
+      <div><label for="taskDate">期限（任意）</label><input type="date" id="taskDate"></div>
     </div>
     <p><button onclick="addTask()">＋ タスクを追加</button></p>
   </div>
-  <div class="card"><h2>タスク一覧</h2><div id="taskList"></div></div>
+  <div class="card">
+    <h2>タスク一覧</h2>
+    <div id="taskList"></div>
+  </div>
 </section>
+
 <section id="goals" class="hidden">
   <div class="card">
-    <h2>科目ごとの週間目標（時間）</h2>
-    <p class="sub">目標は週が変わっても引き継がれるよ。</p>
+    <h2>週間目標を設定</h2>
+    <p class="muted">科目ごとの目標時間を設定しよう。目標は週が変わっても引き継がれるよ。</p>
     <div id="goalInputs"></div>
     <p><button onclick="saveGoals()">目標を保存</button></p>
   </div>
 </section>
+
 <section id="history" class="hidden">
-  <div class="card"><h2>週ごとの学習履歴</h2><div id="historyList"></div></div>
-  <div class="card"><h2>データについて</h2><p class="sub">記録はこのブラウザに保存されます。ブラウザのデータを消すと記録も消える場合があるので注意してね。</p><button class="secondary" onclick="exportData()">記録をバックアップ</button><p><label>バックアップから復元</label><input type="file" id="importFile" accept=".json" onchange="importData(event)"></p></div>
+  <div class="card">
+    <h2>過去の学習記録</h2>
+    <p class="muted">週が切り替わると、その時点までの学習時間を履歴に保存するよ。</p>
+    <div id="historyList"></div>
+  </div>
+  <div class="card">
+    <h2>データのバックアップ</h2>
+    <p class="muted">大切な学習記録をファイルに保存できるよ。機種変更やブラウザのデータ消去に備えて、ときどきバックアップしてね。</p>
+    <button onclick="exportData()">バックアップを書き出す</button>
+    <label for="importFile">バックアップから復元</label>
+    <input type="file" id="importFile" accept=".json,application/json" onchange="importData(event)">
+  </div>
 </section>
+
+<section id="settings" class="hidden">
+  <div class="card">
+    <h2>🎨 科目ごとのカラー設定</h2>
+    <p class="muted">好きな色を選んでね。色は自動で保存され、学習時間の円グラフと科目別進捗の両方に反映されるよ。</p>
+    <div id="colorInputs"></div>
+    <hr>
+    <h3>全体の円グラフ</h3>
+    <p class="muted">各科目の色が、学習時間の割合を表すよ。</p>
+    <div id="settingsPreview"></div>
+    <p><button class="secondary" onclick="resetColors()">初期カラーに戻す</button></p>
+  </div>
+</section>
+
 <script>
-const subjects=["英語","国語","数学","世界史","地理","理科","情報Ⅰ"];
-const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-const weekKey=(date=new Date())=>{let d=new Date(date);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-const fresh=()=>({week:weekKey(),goals:Object.fromEntries(subjects.map(s=>[s,5])),logs:{},tasks:[],history:{}});
-let data;
-try{data=JSON.parse(localStorage.getItem("studyPlannerData"))||fresh()}catch(e){data=fresh()}
-function save(){localStorage.setItem("studyPlannerData",JSON.stringify(data))}
-function ensureWeek(){
- const wk=weekKey();
- if(!data.week)data.week=wk;
- if(data.week!==wk){
-   data.history[data.week]={...(data.logs[data.week]||{})};
-   data.week=wk;
- }
- if(!data.logs[data.week])data.logs[data.week]={};
- save();
+"use strict";
+
+const SUBJECTS = ["英語","国語","数学","世界史","地理","理科","情報Ⅰ"];
+const DEFAULT_COLORS = {
+  "英語":"#5275EF",
+  "国語":"#35B7A1",
+  "数学":"#F5B544",
+  "世界史":"#E681A8",
+  "地理":"#9B83E6",
+  "理科":"#E58A48",
+  "情報Ⅰ":"#4A9CC7"
+};
+const STORAGE_KEY = "studyPlannerData";
+const COLORS_KEY = "studyPlannerColors";
+
+function freshData(){
+  return {
+    week: jstWeekKey(),
+    goals: Object.fromEntries(SUBJECTS.map(s=>[s,5])),
+    logs: {},
+    tasks: [],
+    history: {},
+    colors: {...DEFAULT_COLORS}
+  };
 }
-ensureWeek();
-function show(id){
- document.querySelectorAll("body>section").forEach(s=>s.classList.toggle("hidden",s.id!==id));
- document.querySelectorAll("nav button").forEach((b,i)=>b.className=["home","timer","tasks","goals","history"][i]===id?"":"secondary");
- render();
+
+function jstDateParts(date = new Date()){
+  const parts = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Tokyo",
+    year:"numeric",month:"2-digit",day:"2-digit"
+  }).formatToParts(date);
+  const out = {};
+  parts.forEach(p=>{if(p.type!=="literal")out[p.type]=p.value;});
+  return {year:Number(out.year),month:Number(out.month),day:Number(out.day)};
 }
-function mins(sec){return Math.floor(sec/60)}
-function totalMinutes(log){return Object.values(log||{}).reduce((a,b)=>a+b,0)}
+
+function jstWeekKey(date = new Date()){
+  const p = jstDateParts(date);
+  const utc = new Date(Date.UTC(p.year,p.month-1,p.day));
+  const day = (utc.getUTCDay()+6)%7;
+  utc.setUTCDate(utc.getUTCDate()-day);
+  return `${utc.getUTCFullYear()}-${String(utc.getUTCMonth()+1).padStart(2,"0")}-${String(utc.getUTCDate()).padStart(2,"0")}`;
+}
+
+function readData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return freshData();
+    const old = JSON.parse(raw);
+    const base = freshData();
+    const d = {...base,...old};
+    d.goals = {...base.goals,...(old.goals||{})};
+    d.logs = old.logs || {};
+    d.history = old.history || {};
+    d.tasks = Array.isArray(old.tasks) ? old.tasks : [];
+    d.colors = {...base.colors,...(old.colors||{})};
+    // 旧バージョンで別キーに保存した色があれば取り込む
+    try{
+      const extra = JSON.parse(localStorage.getItem(COLORS_KEY)||"null");
+      if(extra) d.colors = {...d.colors,...extra};
+    }catch(e){}
+    return d;
+  }catch(e){
+    return freshData();
+  }
+}
+
+let data = readData();
+let running = false;
+let startedAt = 0;
+let elapsedBefore = 0;
+let timerInterval = null;
+
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    localStorage.setItem(COLORS_KEY,JSON.stringify(data.colors));
+  }catch(e){
+    alert("データを保存できなかったよ。端末の空き容量を確認してね。");
+  }
+}
+
+function normalizeLog(log){
+  const out = {};
+  SUBJECTS.forEach(s=>{out[s]=Math.max(0,Number(log?.[s])||0);});
+  return out;
+}
+
+function currentLog(){
+  if(!data.logs[data.week]) data.logs[data.week] = {};
+  return data.logs[data.week];
+}
+
+function rolloverWeek(){
+  const current = jstWeekKey();
+  if(!data.week) data.week = current;
+
+  if(data.week !== current){
+    // 前の週の学習記録を履歴へ退避
+    data.history[data.week] = normalizeLog(data.logs[data.week]||{});
+    data.week = current;
+    if(!data.logs[current]) data.logs[current] = {};
+    // 古い未完了タスクはそのまま維持
+    // 目標・カラー設定もそのまま維持
+    saveData();
+  }
+  if(!data.logs[data.week]) data.logs[data.week] = {};
+}
+
+function totalSeconds(log){
+  return SUBJECTS.reduce((sum,s)=>sum+(Number(log?.[s])||0),0);
+}
+function minutesText(seconds){
+  const m = Math.floor((Number(seconds)||0)/60);
+  const h = Math.floor(m/60);
+  const rest = m%60;
+  return h>0 ? `${h}時間${rest}分` : `${m}分`;
+}
+function esc(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function validColor(value){
+  return /^#[0-9a-fA-F]{6}$/.test(value||"");
+}
+function getColor(subject){
+  return validColor(data.colors[subject]) ? data.colors[subject] : DEFAULT_COLORS[subject];
+}
+function showTab(id){
+  document.querySelectorAll("body>section").forEach(el=>{
+    el.classList.toggle("hidden",el.id!==id);
+  });
+  document.querySelectorAll("nav button").forEach(btn=>{
+    btn.classList.toggle("secondary",btn.dataset.tab!==id);
+  });
+  render();
+}
+function populateSelect(id){
+  document.getElementById(id).innerHTML = SUBJECTS.map(s=>
+    `<option value="${esc(s)}">${esc(s)}</option>`
+  ).join("");
+}
+
+function donutSvg(percent,color,label,size=116){
+  const p = Math.max(0,Math.min(100,Number(percent)||0));
+  const r = 39, circumference = 2*Math.PI*r;
+  const offset = circumference*(1-p/100);
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${esc(label)} ${Math.round(p)}%" style="width:${size}px;max-width:100%;height:auto">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8edf5" stroke-width="10"/>
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"
+      stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 50 50)"/>
+    <text x="50" y="54" text-anchor="middle" font-size="17" font-weight="750" fill="currentColor">${Math.round(p)}%</text>
+  </svg>`;
+}
+
+function totalDonutSvg(log){
+  const values = SUBJECTS.map(s=>Math.max(0,Number(log[s])||0));
+  const total = values.reduce((a,b)=>a+b,0);
+  const r=39,circ=2*Math.PI*r;
+  if(total<=0){
+    return `<div style="display:flex;justify-content:center"><svg viewBox="0 0 100 100" width="150" role="img" aria-label="学習記録はまだありません">
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8edf5" stroke-width="13"/>
+      <text x="50" y="48" text-anchor="middle" font-size="10" fill="currentColor">学習時間</text>
+      <text x="50" y="62" text-anchor="middle" font-size="11" fill="currentColor">0分</text>
+    </svg></div>`;
+  }
+  let offset=0;
+  const segments=values.map((v,i)=>{
+    if(v<=0)return "";
+    const len=circ*v/total;
+    const segment=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="${getColor(SUBJECTS[i])}" stroke-width="13"
+      stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
+    offset+=len;
+    return segment;
+  }).join("");
+  return `<div style="display:flex;justify-content:center"><svg viewBox="0 0 100 100" width="150" role="img" aria-label="科目別学習時間の割合">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8edf5" stroke-width="13"/>
+    ${segments}
+    <text x="50" y="46" text-anchor="middle" font-size="10" fill="currentColor">今週合計</text>
+    <text x="50" y="61" text-anchor="middle" font-size="12" font-weight="750" fill="currentColor">${minutesText(total)}</text>
+  </svg></div>`;
+}
+
 function render(){
- ensureWeek();
- const log=data.logs[data.week]||{};
- document.getElementById("weekLabel").textContent="今週："+data.week+" から";
- const total=totalMinutes(log);
- document.getElementById("total").textContent=total+"分";
- const goal=Object.values(data.goals).reduce((a,b)=>a+(Number(b)||0)*60,0);
- document.getElementById("overallBar").style.width=Math.min(100,goal?total/goal*100:0)+"%";
- const done=data.tasks.filter(t=>t.done).length;
- document.getElementById("doneCount").textContent=done+"/"+data.tasks.length;
- document.getElementById("homeSubjects").innerHTML=subjects.map(s=>{
- const actual=mins(log[s]||0),g=Number(data.goals[s]||0)*60;
- return `<div class="subject"><span>${s}</span><span>${actual} / ${g} 分</span></div><div class="track"><div style="width:${Math.min(100,g?actual/g*100:0)}%"></div></div>`;
- }).join("");
- const pending=data.tasks.filter(t=>!t.done);
- document.getElementById("homeTasks").innerHTML=pending.length?pending.slice(0,5).map(t=>`<div class="task"><span>${esc(t.name)} <small>${esc(t.subject)}</small></span></div>`).join(""):"<p class='sub'>未完了タスクはないよ！</p>";
- document.getElementById("taskList").innerHTML=data.tasks.length?data.tasks.map(t=>`<div class="task ${t.done?"done":""}"><input type="checkbox" style="width:22px" ${t.done?"checked":""} onchange="toggleTask(${t.id})"><span>${esc(t.name)}<br><small>${esc(t.subject)}${t.date?"・期限 "+esc(t.date):""}</small></span><button class="danger" onclick="deleteTask(${t.id})">削除</button></div>`).join(""):"<p class='sub'>タスクを追加してみよう。</p>";
- document.getElementById("goalInputs").innerHTML=subjects.map(s=>`<div class="row"><label style="flex:2">${s}</label><div style="flex:1"><input type="number" min="0" max="168" id="goal-${s}" value="${Number(data.goals[s]||0)}"></div><span>時間/週</span></div>`).join("");
- document.getElementById("historyList").innerHTML=Object.keys(data.history).sort().reverse().map(w=>{
- const l=data.history[w]||{};return `<div class="task"><span><b>${w} の週</b><br><small>${subjects.map(s=>s+" "+mins(l[s]||0)+"分").join(" ・ ")}</small></span><b>${totalMinutes(l)}分</b></div>`;
- }).join("")||"<p class='sub'>週が終わるとここに記録が残るよ。</p>";
+  rolloverWeek();
+  const log = normalizeLog(currentLog());
+  const total = totalSeconds(log);
+  const goalSeconds = SUBJECTS.reduce((sum,s)=>sum+Math.max(0,Number(data.goals[s])||0)*3600,0);
+  const done = data.tasks.filter(t=>t.done).length;
+
+  document.getElementById("weekLabel").textContent =
+    `今週：${data.week}（日本時間・月曜開始）`;
+  document.getElementById("totalTime").textContent = minutesText(total);
+  document.getElementById("taskProgress").textContent = `${done}/${data.tasks.length}`;
+  const overall = goalSeconds ? Math.min(100,total/goalSeconds*100) : 0;
+  document.getElementById("overallBar").style.width = `${overall}%`;
+  document.getElementById("goalSummary").textContent =
+    `週間目標 ${minutesText(goalSeconds)} の ${Math.round(overall)}% を達成`;
+
+  document.getElementById("totalDonut").innerHTML = totalDonutSvg(log);
+  document.getElementById("totalLegend").innerHTML = SUBJECTS.map(s=>{
+    const sec=log[s]||0;
+    const share=total ? Math.round(sec/total*100) : 0;
+    return `<div class="legend-item"><span class="dot" style="background:${getColor(s)}"></span><span>${esc(s)}：${minutesText(sec)}（${share}%）</span></div>`;
+  }).join("");
+
+  document.getElementById("subjectGrid").innerHTML = SUBJECTS.map(s=>{
+    const sec=log[s]||0;
+    const goal=Math.max(0,Number(data.goals[s])||0)*3600;
+    const pct=goal>0 ? Math.min(100,sec/goal*100) : (sec>0?100:0);
+    return `<div class="subject-card">
+      ${donutSvg(pct,getColor(s),s,116)}
+      <div class="name">${esc(s)}</div>
+      <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
+      <div class="track" style="margin-top:8px"><div style="width:${pct}%;background:${getColor(s)}"></div></div>
+    </div>`;
+  }).join("");
+
+  const pending=data.tasks.filter(t=>!t.done);
+  document.getElementById("homeTasks").innerHTML = pending.length
+    ? pending.slice(0,5).map(t=>`<div class="task"><span class="dot" style="background:${getColor(t.subject)}"></span><span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}</span></span></div>`).join("")
+    : `<p class="muted">未完了タスクはないよ！</p>`;
+
+  document.getElementById("taskList").innerHTML = data.tasks.length
+    ? data.tasks.map(t=>`<div class="task ${t.done?"done":""}">
+        <input type="checkbox" aria-label="完了" ${t.done?"checked":""} onchange="toggleTask(${Number(t.id)})">
+        <span class="dot" style="background:${getColor(t.subject)}"></span>
+        <span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}${t.date?"・期限 "+esc(t.date):""}</span></span>
+        <button class="danger" onclick="deleteTask(${Number(t.id)})">削除</button>
+      </div>`).join("")
+    : `<p class="muted">タスクを追加してみよう。</p>`;
+
+  document.getElementById("goalInputs").innerHTML = SUBJECTS.map(s=>
+    `<div class="row">
+      <label style="flex:2" for="goal-${s}">${esc(s)}</label>
+      <div style="flex:1"><input type="number" min="0" max="168" step="0.5" id="goal-${s}" value="${Number(data.goals[s]||0)}"></div>
+      <span class="muted">時間/週</span>
+    </div>`
+  ).join("");
+
+  const historyEntries=Object.keys(data.history).sort().reverse();
+  document.getElementById("historyList").innerHTML = historyEntries.length
+    ? historyEntries.map(w=>{
+        const l=normalizeLog(data.history[w]);
+        return `<div class="task"><span class="task-title"><b>${esc(w)} の週</b><br><span class="muted">${SUBJECTS.map(s=>`${esc(s)} ${minutesText(l[s])}`).join(" ・ ")}</span></span><b>${minutesText(totalSeconds(l))}</b></div>`;
+      }).join("")
+    : `<p class="muted">週が切り替わると、ここに過去の記録が表示されるよ。</p>`;
+
+  document.getElementById("colorInputs").innerHTML=SUBJECTS.map(s=>
+    `<div class="color-row">
+      <span class="dot" style="background:${getColor(s)}"></span>
+      <span class="subject-name">${esc(s)}</span>
+      <input type="color" aria-label="${esc(s)}の色" value="${getColor(s)}" onchange="changeColor('${s}',this.value)">
+      <input class="hex" aria-label="${esc(s)}のカラーコード" value="${getColor(s)}" maxlength="7" onchange="changeHexColor('${s}',this.value)">
+    </div>`
+  ).join("");
+  document.getElementById("settingsPreview").innerHTML=totalDonutSvg(log);
 }
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function fillSelect(id){document.getElementById(id).innerHTML=subjects.map(s=>`<option>${s}</option>`).join("")}
-["timerSubject","taskSubject"].forEach(fillSelect);
+
 function addTask(){
- const input=document.getElementById("taskName"),name=input.value.trim();
- if(!name){alert("タスク名を入力してね");return}
- data.tasks.push({id:Date.now(),name,subject:document.getElementById("taskSubject").value,date:document.getElementById("taskDate").value,done:false});
- input.value="";save();render();
+  const input=document.getElementById("taskName");
+  const name=input.value.trim();
+  if(!name){alert("タスク名を入力してね。");return;}
+  data.tasks.push({
+    id:Date.now(),
+    name,
+    subject:document.getElementById("taskSubject").value,
+    date:document.getElementById("taskDate").value,
+    done:false
+  });
+  input.value="";
+  document.getElementById("taskDate").value="";
+  saveData();render();
 }
-function toggleTask(id){const t=data.tasks.find(t=>t.id===id);if(t)t.done=!t.done;save();render()}
-function deleteTask(id){if(confirm("このタスクを削除する？")){data.tasks=data.tasks.filter(t=>t.id!==id);save();render()}}
+function toggleTask(id){
+  const task=data.tasks.find(t=>Number(t.id)===Number(id));
+  if(task)task.done=!task.done;
+  saveData();render();
+}
+function deleteTask(id){
+  if(confirm("このタスクを削除する？")){
+    data.tasks=data.tasks.filter(t=>Number(t.id)!==Number(id));
+    saveData();render();
+  }
+}
 function saveGoals(){
- subjects.forEach(s=>{let v=Number(document.getElementById("goal-"+s).value);data.goals[s]=Math.max(0,Math.min(168,v||0))});
- save();render();alert("週間目標を保存したよ！");
+  SUBJECTS.forEach(s=>{
+    const el=document.getElementById("goal-"+s);
+    const value=Number(el.value);
+    data.goals[s]=Math.max(0,Math.min(168,Number.isFinite(value)?value:0));
+  });
+  saveData();render();
+  alert("週間目標を保存したよ！");
 }
-let running=false,startedAt=0,elapsed=0,interval=null;
-function clockText(sec){sec=Math.max(0,Math.floor(sec));return [Math.floor(sec/3600),Math.floor(sec%3600/60),sec%60].map(n=>String(n).padStart(2,"0")).join(":")}
-function updateClock(){document.getElementById("clock").textContent=clockText(elapsed+(running?(Date.now()-startedAt)/1000:0))}
-function startTimer(){if(running)return;running=true;startedAt=Date.now();interval=setInterval(updateClock,500);document.getElementById("startBtn").textContent="計測中…"}
+function changeColor(subject,color){
+  if(!validColor(color))return;
+  data.colors[subject]=color.toUpperCase();
+  saveData();render();
+}
+function changeHexColor(subject,color){
+  if(!validColor(color)){
+    alert("カラーコードは #5275EF のように入力してね。");
+    render();return;
+  }
+  changeColor(subject,color);
+}
+function resetColors(){
+  if(!confirm("すべての科目の色を初期設定に戻す？"))return;
+  data.colors={...DEFAULT_COLORS};
+  saveData();render();
+}
+
+function clockText(sec){
+  sec=Math.max(0,Math.floor(sec));
+  return [Math.floor(sec/3600),Math.floor(sec%3600/60),sec%60]
+    .map(n=>String(n).padStart(2,"0")).join(":");
+}
+function elapsedSeconds(){
+  return elapsedBefore+(running?(Date.now()-startedAt)/1000:0);
+}
+function updateClock(){
+  document.getElementById("clock").textContent=clockText(elapsedSeconds());
+}
+function startTimer(){
+  if(running)return;
+  running=true;
+  startedAt=Date.now();
+  timerInterval=setInterval(updateClock,500);
+  document.getElementById("startBtn").textContent="計測中…";
+}
 function pauseTimer(){
- if(!running)return;
- elapsed+=(Date.now()-startedAt)/1000;running=false;clearInterval(interval);interval=null;
- const seconds=Math.floor(elapsed);
- if(seconds>0){const s=document.getElementById("timerSubject").value;data.logs[data.week][s]=(data.logs[data.week][s]||0)+seconds;save()}
- elapsed=0;document.getElementById("startBtn").textContent="スタート";updateClock();render();
+  if(!running && elapsedBefore<=0)return;
+  if(running){
+    elapsedBefore+=(Date.now()-startedAt)/1000;
+    running=false;
+    clearInterval(timerInterval);
+    timerInterval=null;
+  }
+  const seconds=Math.floor(elapsedBefore);
+  if(seconds>0){
+    rolloverWeek();
+    const subject=document.getElementById("timerSubject").value;
+    const log=currentLog();
+    log[subject]=(Number(log[subject])||0)+seconds;
+    saveData();
+  }
+  elapsedBefore=0;
+  document.getElementById("startBtn").textContent="スタート";
+  updateClock();render();
 }
-function resetTimer(){running=false;clearInterval(interval);interval=null;elapsed=0;document.getElementById("startBtn").textContent="スタート";updateClock()}
-function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="study-planner-backup.json";a.click();URL.revokeObjectURL(a.href)}
-function importData(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.goals||!d.tasks)throw Error();data=d;ensureWeek();render();alert("復元したよ！")}catch(err){alert("バックアップファイルを読み込めなかったよ")}};r.readAsText(file)}
+function resetTimer(){
+  running=false;
+  clearInterval(timerInterval);
+  timerInterval=null;
+  elapsedBefore=0;
+  document.getElementById("startBtn").textContent="スタート";
+  updateClock();
+}
+
+function exportData(){
+  saveData();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="study-planner-backup.json";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function importData(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const incoming=JSON.parse(reader.result);
+      if(!incoming || !incoming.goals || !incoming.tasks || !incoming.logs){
+        throw new Error("invalid backup");
+      }
+      if(!confirm("現在のデータをバックアップの内容で置き換える？先に今のデータをバックアップしてね。"))return;
+      const base=freshData();
+      data={
+        ...base,...incoming,
+        goals:{...base.goals,...incoming.goals},
+        logs:incoming.logs||{},
+        history:incoming.history||{},
+        tasks:Array.isArray(incoming.tasks)?incoming.tasks:[],
+        colors:{...base.colors,...(incoming.colors||{})}
+      };
+      rolloverWeek();saveData();render();
+      alert("バックアップから復元したよ！");
+    }catch(e){
+      alert("このファイルは読み込めなかったよ。正しいバックアップファイルか確認してね。");
+    }finally{
+      event.target.value="";
+    }
+  };
+  reader.readAsText(file);
+}
+
+// 初期化
+populateSelect("timerSubject");
+populateSelect("taskSubject");
+rolloverWeek();
 render();
+
+// アプリを開いたまま週が変わった場合にも定期的に確認する
+setInterval(()=>{
+  if(jstWeekKey()!==data.week){
+    rolloverWeek();
+    render();
+  }
+},30000);
+
+// タイマー計測中に画面へ戻った場合も表示を更新
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){
+    rolloverWeek();
+    updateClock();
+    render();
+  }
+});
 </script>
 </body>
 </html>
