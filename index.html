@@ -413,6 +413,7 @@ function showTab(id){
   });
   render();
 }
+
 function selectSubjectForTimer(subject) {
   if (!SUBJECTS.includes(subject)) return;
 
@@ -426,8 +427,12 @@ function selectSubjectForTimer(subject) {
     homeSelect.value = subject;
   }
 
-  showTab("timer");
+  elapsedBefore = 0;
+  updateClock();
+  render();
+  showTab("home");
 }
+
   
 function populateSelect(id) {
   const select = document.getElementById(id);
