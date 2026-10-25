@@ -58,6 +58,19 @@ input[type=checkbox]{width:21px;height:21px;accent-color:#4169e1}
 .actions button{flex:1}
 hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
 @media(min-width:580px){.subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.subject-card {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.subject-card:active {
+  transform: scale(0.98);
+}
+
+.subject-card:focus-visible {
+  outline: 3px solid #4169e1;
+  outline-offset: 3px;
+}
 </style>
 </head>
 <body>
@@ -79,6 +92,24 @@ hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
 <section id="home">
   <div class="card">
     <h2>今週の学習</h2>
+    <div class="card">
+  <h2>⏱️ すぐに学習スタート</h2>
+
+  <label for="homeTimerSubject">科目</label>
+  <select id="homeTimerSubject" onchange="syncTimerSubject(this.value)"></select>
+
+  <div class="timer" id="homeClock">00:00:00</div>
+
+  <div class="actions">
+    <button onclick="startTimer()">スタート</button>
+    <button class="secondary" onclick="pauseTimer()">停止して記録</button>
+    <button class="secondary" onclick="resetTimer()">リセット</button>
+  </div>
+
+  <p class="muted">
+    下の科目別グラフをタップしても、すぐに計測を始められるよ。
+  </p>
+</div>
     <div class="row">
       <div><div class="muted">学習時間</div><div class="stat" id="totalTime">0分</div></div>
       <div><div class="muted">タスク達成</div><div class="stat" id="taskProgress">0/0</div></div>
@@ -295,7 +326,9 @@ let elapsedBefore = 0;
 let timerInterval = null;
 
 function saveData(){
+  
   try{
+    data.lastTimerSubject = document.getElementById("timerSubject").value;
     localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
     localStorage.setItem(COLORS_KEY,JSON.stringify(data.colors));
   }catch(e){
@@ -361,10 +394,18 @@ function showTab(id){
   });
   render();
 }
-function populateSelect(id){
-  document.getElementById(id).innerHTML = SUBJECTS.map(s=>
+
+  function populateSelect(id) {
+  const select = document.getElementById(id);
+  const previousValue = select.value;
+
+  select.innerHTML = SUBJECTS.map(s =>
     `<option value="${esc(s)}">${esc(s)}</option>`
   ).join("");
+
+  if (SUBJECTS.includes(previousValue)) {
+    select.value = previousValue;
+  }
 }
 function renderSubjectManager() {
   const container = document.getElementById("subjectManager");
@@ -504,7 +545,12 @@ function render(){
     const sec=log[s]||0;
     const goal=Math.max(0,Number(data.goals[s])||0)*3600;
     const pct=goal>0 ? Math.min(100,sec/goal*100) : (sec>0?100:0);
-    return `<div class="subject-card">
+    return `<div class="subject-card"
+  role="button"
+  tabindex="0"
+  aria-label="${esc(s)}のタイマーを開始"
+  onclick="startSubjectTimer(${JSON.stringify(s)})"
+  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startSubjectTimer(${JSON.stringify(s)});}">
       ${donutSvg(pct,getColor(s),s,116)}
       <div class="name">${esc(s)}</div>
       <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
@@ -614,15 +660,46 @@ function clockText(sec){
 function elapsedSeconds(){
   return elapsedBefore+(running?(Date.now()-startedAt)/1000:0);
 }
-function updateClock(){
-  document.getElementById("clock").textContent=clockText(elapsedSeconds());
+function updateClock() {
+  const text = clockText(elapsedSeconds());
+
+  document.getElementById("clock").textContent = text;
+
+  const homeClock = document.getElementById("homeClock");
+  if (homeClock) {
+    homeClock.textContent = text;
+  }
 }
-function startTimer(){
-  if(running)return;
-  running=true;
-  startedAt=Date.now();
-  timerInterval=setInterval(updateClock,500);
-  document.getElementById("startBtn").textContent="計測中…";
+
+function syncTimerSubject(subject) {
+  const timerSelect = document.getElementById("timerSubject");
+  const homeSelect = document.getElementById("homeTimerSubject");
+
+  if (SUBJECTS.includes(subject)) {
+    timerSelect.value = subject;
+    homeSelect.value = subject;
+  }
+}
+
+function startSubjectTimer(subject) {
+  syncTimerSubject(subject);
+
+  if (!running) {
+    startTimer();
+  }
+
+  showTab("home");
+}
+function startTimer() {
+  if (running) return;
+
+  running = true;
+  startedAt = Date.now();
+
+  timerInterval = setInterval(updateClock, 500);
+
+  document.getElementById("startBtn").textContent = "計測中…";
+  updateClock();
 }
 function pauseTimer(){
   if(!running && elapsedBefore<=0)return;
@@ -695,7 +772,16 @@ function importData(event){
 
 // 初期化
 populateSelect("timerSubject");
+populateSelect("homeTimerSubject");
 populateSelect("taskSubject");
+
+syncTimerSubject(SUBJECTS.includes(data.lastTimerSubject)
+  ? data.lastTimerSubject
+  : SUBJECTS[0]);
+
+document.getElementById("timerSubject").addEventListener("change", e => {
+  syncTimerSubject(e.target.value);
+});
 renderSubjectManager();
 rolloverWeek();
 render();
