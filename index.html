@@ -33,6 +33,9 @@ nav{display:flex;gap:7px;overflow-x:auto;margin:20px 0 16px;padding:4px 2px 8px;
 <section id="home">
  <div class="card hero">
   <div class="muted">いま取り組む科目</div><div id="mainTimerCarousel" style="display:flex;align-items:center;justify-content:center;gap:8px;touch-action:pan-y;user-select:none;margin:8px 0">
+  <div style="max-width:260px;margin:10px auto 4px">
+  <select id="timerSubject" aria-label="タイマーの科目を選択"></select>
+</div>
    <button class="secondary" onclick="changeMainSubject(-1)" aria-label="前の科目">‹</button><div id="mainTimerDonut" style="display:inline-block"></div><button class="secondary" onclick="changeMainSubject(1)" aria-label="次の科目">›</button>
   </div><p id="mainTimerStatus" class="muted">円グラフをタップすると計測開始・停止</p><div id="mainTimerTime" class="timer">00:00:00</div><div class="muted">円グラフをタップしてスタート／停止・記録</div>
  </div>
