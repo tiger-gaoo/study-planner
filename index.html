@@ -1,247 +1,1229 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#edf2ff">
+<meta name="theme-color" content="#f4f6fb">
 <title>共通テスト 学習プランナー</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;color:#253451;background:#edf2ff;--bg:#edf2ff;--surface:rgba(255,255,255,.72);--surface2:rgba(255,255,255,.52);--text:#253451;--muted:#75819a;--line:rgba(116,137,180,.2);--accent:#5478e8;--accent-soft:#e4ebff;--shadow:0 12px 35px rgba(63,83,130,.10)}
-*{box-sizing:border-box}body{margin:0;padding:20px 14px 48px;max-width:1000px;margin-inline:auto;color:var(--text);background:radial-gradient(ellipse at 8% 0%,#dce8ff 0,transparent 35%),radial-gradient(ellipse at 95% 15%,#f4e4ff 0,transparent 30%),var(--bg);min-height:100vh;transition:background .2s,color .2s}
-body.dark{--bg:#111827;--surface:rgba(31,41,59,.78);--surface2:rgba(31,41,59,.58);--text:#edf2ff;--muted:#a4afc5;--line:rgba(190,204,235,.14);--accent:#90a9ff;--accent-soft:#293657;--shadow:0 14px 38px rgba(0,0,0,.22);background:radial-gradient(ellipse at 8% 0%,#202f52 0,transparent 35%),radial-gradient(ellipse at 95% 15%,#352546 0,transparent 30%),var(--bg)}
-h1{font-size:clamp(23px,4vw,31px);margin:10px 0 5px;letter-spacing:-.04em}h2{font-size:19px;margin:0 0 14px}h3{font-size:15px;margin:0 0 10px}p{line-height:1.6}button,input,select{font:inherit}button{border:1px solid transparent;border-radius:13px;background:var(--accent);color:white;padding:11px 14px;font-weight:700;cursor:pointer;box-shadow:0 5px 12px rgba(84,120,232,.14);transition:transform .15s,opacity .15s}button:active{transform:scale(.98)}button.secondary{background:var(--surface2);color:var(--text);border-color:var(--line);box-shadow:none}button.danger{background:#fff0f1;color:#a52d3a;padding:8px 10px;box-shadow:none}body.dark button.danger{background:#48272e;color:#ffc1c8}button:disabled{opacity:.45}
-header{padding:4px 2px 0}.pill{display:inline-block;padding:6px 11px;border-radius:30px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.09em}.muted{color:var(--muted);font-size:13px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}.topline .actions{justify-content:flex-end}
-nav{display:flex;gap:7px;overflow-x:auto;margin:20px 0 16px;padding:4px 2px 8px;position:sticky;top:0;z-index:5;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}nav button{flex:0 0 auto;white-space:nowrap;padding:10px 13px;font-size:13px}nav button.active{background:var(--accent);color:white}
-.card{background:var(--surface);border:1px solid rgba(255,255,255,.65);border-color:var(--line);border-radius:22px;padding:18px;margin:13px 0;box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.hero{padding:22px 18px;text-align:center;background:linear-gradient(145deg,var(--surface),var(--surface2))}
-.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0;flex:1}label{display:block;color:var(--muted);font-size:13px;margin:10px 0 5px}input:not([type=checkbox]):not([type=color]):not([type=file]),select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--surface);color:var(--text)}input[type=color]{width:48px;height:42px;border:0;background:none;padding:0;cursor:pointer}input[type=checkbox]{width:21px;height:21px;accent-color:var(--accent)}
-.stat{font-size:clamp(23px,5vw,30px);font-weight:800;margin:5px 0;letter-spacing:-.04em}.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat-box{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:13px}.track{height:9px;background:var(--line);border-radius:20px;overflow:hidden}.track>div{height:100%;border-radius:20px;transition:width .25s;background:var(--accent)}
-.subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.subject-card{background:var(--surface2);border:1px solid var(--line);border-radius:18px;padding:13px 8px;text-align:center;min-width:0;cursor:pointer;transition:transform .15s,box-shadow .15s}.subject-card:active{transform:scale(.98)}.subject-card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}.subject-card svg{display:block;margin:0 auto 4px}.subject-card .name{font-weight:750;font-size:15px}.subject-card .detail{font-size:12px;color:var(--muted);margin-top:5px}
-.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.legend-item{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0}.dot{width:11px;height:11px;border-radius:4px;flex:0 0 auto}.legend-item span:last-child{overflow-wrap:anywhere}
-.task{display:flex;gap:9px;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}.task:last-child{border-bottom:0}.task .task-title{flex:1;overflow-wrap:anywhere}.task.done .task-title{text-decoration:line-through;color:var(--muted)}.timer{font-size:clamp(34px,8vw,52px);text-align:center;font-weight:800;font-variant-numeric:tabular-nums;padding:12px 0;letter-spacing:-.04em}.hidden{display:none!important}.color-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--line)}.color-row:last-child{border-bottom:0}.color-row .subject-name{flex:1}.color-row .hex{width:104px!important;padding:9px!important;font-size:13px}.full{width:100%}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}hr{border:0;border-top:1px solid var(--line);margin:18px 0}.chart{width:100%;height:auto;display:block}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.cal-head,.cal-day{text-align:center;font-size:12px;padding:8px 2px}.cal-head{color:var(--muted);font-weight:700}.cal-day{border:1px solid var(--line);border-radius:10px;min-height:48px;background:var(--surface2);cursor:pointer;color:var(--text)}.cal-day .heat{width:7px;height:7px;border-radius:50%;display:block;margin:4px auto 0;background:transparent}.cal-day.selected{outline:2px solid var(--accent)}.cal-day.other{opacity:.35}.cal-day.has-study .heat{background:var(--accent)}.chart-wrap{padding:8px 0}.inline-note{padding:11px 13px;background:var(--accent-soft);color:var(--text);border-radius:14px;font-size:13px}.focus-mode .nonfocus{display:none!important}.focus-mode{max-width:720px}.focus-mode .hero{min-height:65vh;display:flex;flex-direction:column;justify-content:center}.focus-mode #mainTimerDonut svg{width:min(72vw,320px)!important}
-.account-panel{max-width:600px;margin:28px auto;padding:20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);backdrop-filter:blur(18px)}.account-panel input{margin-bottom:8px}
-@media (min-width: 620px) {
-  .subject-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .legend {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .stat-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;color:#26334b;background:#f4f6fb}
+*{box-sizing:border-box}
+body{margin:0;padding:20px 14px 42px;max-width:800px;margin-inline:auto}
+h1{font-size:25px;margin:10px 0 5px}
+h2{font-size:19px;margin:0 0 14px}
+h3{font-size:15px;margin:0 0 10px}
+p{line-height:1.6}
+button,input,select{font:inherit}
+button{border:0;border-radius:12px;background:#4169e1;color:white;padding:11px 14px;font-weight:650;cursor:pointer}
+button:active{opacity:.8}
+button.secondary{background:#e8edf9;color:#304a83}
+button.danger{background:#fff0f0;color:#a52d3a;padding:8px 10px}
+button:disabled{opacity:.45}
+nav{display:flex;gap:7px;overflow-x:auto;margin:20px 0 16px;padding-bottom:3px}
+nav button{flex:0 0 auto;white-space:nowrap}
+.card{background:white;border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 3px 16px #2430470a}
+.muted{color:#78849a;font-size:13px}
+.pill{display:inline-block;padding:5px 10px;border-radius:30px;background:#e9efff;color:#3157b7;font-size:12px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{min-width:0;flex:1}
+label{display:block;color:#69758b;font-size:13px;margin:10px 0 5px}
+input:not([type=checkbox]):not([type=color]):not([type=file]),select{width:100%;border:1px solid #d8dfeb;border-radius:10px;padding:11px;background:white;color:#26334b}
+input[type=color]{width:48px;height:42px;border:0;background:none;padding:0;cursor:pointer}
+input[type=checkbox]{width:21px;height:21px;accent-color:#4169e1}
+.stat{font-size:27px;font-weight:750;margin:5px 0}
+.track{height:8px;background:#e9edf4;border-radius:20px;overflow:hidden}
+.track>div{height:100%;border-radius:20px;transition:width .25s}
+.subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.subject-card{background:#f8f9fc;border:1px solid #edf0f6;border-radius:15px;padding:12px 8px;text-align:center;min-width:0}
+.subject-card svg{width:min(100%,120px);height:auto;display:block;margin:0 auto 4px}
+.subject-card .name{font-weight:700;font-size:15px}
+.subject-card .detail{font-size:12px;color:#78849a;margin-top:5px}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0}
+.dot{width:11px;height:11px;border-radius:4px;flex:0 0 auto}
+.legend-item span:last-child{overflow-wrap:anywhere}
+.task{display:flex;gap:9px;align-items:center;border-bottom:1px solid #edf0f5;padding:12px 0}
+.task:last-child{border-bottom:0}
+.task .task-title{flex:1;overflow-wrap:anywhere}
+.task.done .task-title{text-decoration:line-through;color:#9aa3b4}
+.timer{font-size:43px;text-align:center;font-weight:750;font-variant-numeric:tabular-nums;padding:20px 0}
+.hidden{display:none!important}
+.color-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #edf0f5}
+.color-row:last-child{border-bottom:0}
+.color-row .subject-name{flex:1}
+.color-row .hex{width:104px!important;padding:9px!important;font-size:13px}
+.full{width:100%}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{flex:1}
+hr{border:0;border-top:1px solid #edf0f5;margin:16px 0}
+@media(min-width:580px){.subject-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.subject-card {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
-/* タイマー円グラフを中央に配置 */
-#mainTimerCarousel {
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  min-height: 290px;
-  margin: 8px 0 !important;
-  padding: 0 44px !important;
-  gap: 0 !important;
-  box-sizing: border-box !important;
+.subject-card:active {
+  transform: scale(0.98);
 }
 
-/* 左右の矢印は円グラフの位置に影響させない */
-#mainTimerCarousel > button:first-of-type {
-  position: absolute !important;
-  left: 0 !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  z-index: 2;
+.subject-card:focus-visible {
+  outline: 3px solid #4169e1;
+  outline-offset: 3px;
 }
-
-#mainTimerCarousel > button:last-of-type {
-  position: absolute !important;
-  right: 0 !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  z-index: 2;
-}
-
-/* 円グラフ本体 */
-#mainTimerDonut {
-  position: relative !important;
-  left: auto !important;
-  top: auto !important;
-  transform: none !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  flex: 0 1 300px !important;
-  width: min(76vw, 300px) !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin: 0 auto !important;
-}
-
-#mainTimerDonut > div {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-}
-
-#mainTimerDonut svg {
-  display: block !important;
-  width: 100% !important;
-  max-width: 300px !important;
-  height: auto !important;
-  margin: 0 auto !important;
-}
-
-.focus-mode #mainTimerCarousel {
-  min-height: 340px;
-}
-
-.focus-mode #mainTimerDonut {
-  width: min(78vw, 320px) !important;
-}
-
-.focus-mode #mainTimerDonut svg {
-  max-width: 320px !important;
-}
-</style>
 </style>
 </head>
 <body>
-<header class="nonfocus">
- <div class="topline"><span class="pill">MY STUDY PLAN</span><div class="actions"><button class="secondary" id="themeBtn" onclick="toggleTheme()">🌙 暗め</button><button class="secondary" onclick="toggleFocus()">集中モード</button></div></div>
- <h1>共通テスト 学習プランナー 📚</h1><div class="muted" id="weekLabel">日本時間で週を管理</div>
+<header>
+  <span class="pill">MY STUDY PLAN</span>
+  <h1>共通テスト 学習プランナー 📚</h1>
+  <div class="muted" id="weekLabel">日本時間で週を管理</div>
 </header>
-<nav class="nonfocus" id="mainNav">
- <button class="active" data-tab="home" onclick="showTab('home')">ホーム</button><button data-tab="subjects" onclick="showTab('subjects')">全科目</button><button data-tab="tasks" onclick="showTab('tasks')">タスク</button><button data-tab="goals" onclick="showTab('goals')">週間目標</button><button data-tab="history" onclick="showTab('history')">履歴・カレンダー</button><button data-tab="settings" onclick="showTab('settings')">設定</button><button data-tab="account-panel" onclick="showTab('account-panel')">アカウント</button>
+
+<nav>
+  <button data-tab="home" onclick="showTab('home')">ホーム</button>
+  <button class="secondary" data-tab="subjects" onclick="showTab('subjects')">全科目</button>
+  <button class="secondary" data-tab="timer" onclick="showTab('timer')">タイマー</button>
+  <button class="secondary" data-tab="tasks" onclick="showTab('tasks')">タスク</button>
+  <button class="secondary" data-tab="goals" onclick="showTab('goals')">週間目標</button>
+  <button class="secondary" data-tab="history" onclick="showTab('history')">学習履歴</button>
+  <button class="secondary" data-tab="settings" onclick="showTab('settings')">🎨 デザイン</button>
 </nav>
+
 <section id="home">
- <div class="card hero">
-   <div class="muted">いま取り組む科目</div>
+  <div class="card">
+    <h2>今週の学習</h2>
+  
+  <div class="card">
+  <h2>⏱️ 学習タイマー</h2>
+  <p class="muted">左右にスワイプして科目を切り替えよう。</p>
 
-<select
-  id="timerSubject"
-  aria-label="タイマーの科目を選択"
-  style="display:none"
-></select>
+  <div id="mainTimerCarousel"
+       style="text-align:center;touch-action:pan-y;user-select:none;">
+    <button class="secondary"
+            onclick="changeMainSubject(-1)"
+            aria-label="前の科目">❮</button>
 
-<div id="mainTimerCarousel">
-  <button
-    class="secondary"
-    onclick="changeMainSubject(-1)"
-    aria-label="前の科目"
-  >‹</button>
+    <div id="mainTimerDonut"
+         style="display:inline-block;vertical-align:middle;margin:0 8px;">
+    </div>
 
-  <div id="mainTimerDonut"></div>
+    <button class="secondary"
+            onclick="changeMainSubject(1)"
+            aria-label="次の科目">❯</button>
+  </div>
 
-  <button
-    class="secondary"
-    onclick="changeMainSubject(1)"
-    aria-label="次の科目"
-  >›</button>
+  <p id="mainTimerStatus" class="muted" style="text-align:center;">
+    円グラフをタップすると計測開始・停止
+  </p>
 </div>
 
-<p id="mainTimerStatus" class="muted">
-  円グラフをタップすると計測開始・停止
-</p>
+    <div class="row">
+      <div><div class="muted">学習時間</div><div class="stat" id="totalTime">0分</div></div>
+      <div><div class="muted">タスク達成</div><div class="stat" id="taskProgress">0/0</div></div>
+    </div>
+    <div class="track"><div id="overallBar" style="width:0%;background:#4169e1"></div></div>
+    <p class="muted" id="goalSummary">週間目標に向かって進もう！</p>
+  </div>
 
-<div id="mainTimerTime" class="timer">00:00:00</div>
+  <div class="card">
+    <h2>科目別の学習時間の割合</h2>
+    <p class="muted">今週、どの科目にどれくらい時間を使ったかが分かるよ。</p>
+    <div id="totalDonut"></div>
+    <div id="totalLegend" class="legend"></div>
+  </div>
 
-<div class="muted">
-  円グラフをタップしてスタート／停止・記録
-</div>
-  <div style="max-width:260px;margin:10px auto 4px">
-</div>
-    <select id="timerSubject" aria-label="タイマーの科目を選択" style="display:none"></select>
-   <button class="secondary" onclick="changeMainSubject(-1)" aria-label="前の科目">‹</button><div id="mainTimerDonut" style="display:inline-block"></div><button class="secondary" onclick="changeMainSubject(1)" aria-label="次の科目">›</button>
-  </div><p id="mainTimerStatus" class="muted">円グラフをタップすると計測開始・停止</p><div id="mainTimerTime" class="timer">00:00:00</div><div class="muted">円グラフをタップしてスタート／停止・記録</div>
- </div>
- <div class="card"><h2>今日と今週の進捗</h2><div class="stat-grid">
-  <div class="stat-box"><div class="muted">今日の学習</div><div class="stat" id="todayTime">0分</div></div><div class="stat-box"><div class="muted">今週の学習</div><div class="stat" id="totalTime">0分</div></div><div class="stat-box"><div class="muted">タスク完了</div><div class="stat" id="taskProgress">0/0</div></div><div class="stat-box"><div class="muted">週間目標</div><div class="stat" id="goalPercent">0%</div></div>
- </div><div class="track" style="margin-top:14px"><div id="overallBar" style="width:0%"></div></div><p class="muted" id="goalSummary">週間目標に向かって進もう！</p></div>
- <div class="card"><h2>今週の学習時間</h2><p class="muted">日ごとの合計時間。タイマーを停止すると記録されるよ。</p><div id="weeklyChart" class="chart-wrap"></div></div>
- <div class="card"><h2>科目別の学習時間</h2><div id="totalDonut"></div><div id="totalLegend" class="legend"></div></div>
- <div class="card"><h2>未完了のタスク</h2><div id="homeTasks"></div><button class="secondary full" onclick="showTab('tasks')">タスクを管理する</button></div>
+  <div class="card">
+    <h2>科目ごとの週間目標達成率</h2>
+    <p class="muted">円グラフの色が進捗を表すよ。目標を達成すると100%になるよ。</p>
+  </div>
+
+  <div class="card">
+    <h2>未完了のタスク</h2>
+    <div id="homeTasks"></div>
+    <button class="secondary full" onclick="showTab('tasks')">タスクを管理する</button>
+  </div>
 </section>
-<section id="subjects" class="hidden"><div class="card"><h2>📚 全科目の進捗</h2><p class="muted">円グラフをタップするとホームのタイマーでその科目を選択するよ。</p><div id="allSubjectsGrid" class="subject-grid"></div></div></section>
-<section id="tasks" class="hidden"><div class="card"><h2>タスクを追加</h2><label for="taskName">やること</label><input id="taskName" placeholder="例：英単語を50個覚える"><div class="row"><div><label for="taskSubject">科目</label><select id="taskSubject"></select></div><div><label for="taskDate">期限（任意）</label><input type="date" id="taskDate"></div></div><p><button onclick="addTask()">＋ タスクを追加</button></p></div><div class="card"><h2>タスク一覧</h2><div id="taskList"></div></div></section>
-<section id="goals" class="hidden"><div class="card"><h2>週間目標を設定</h2><p class="muted">科目ごとの目標時間を設定しよう。目標は週が変わっても引き継がれるよ。</p><div id="goalInputs"></div><p><button onclick="saveGoals()">目標を保存</button></p></div></section>
-<section id="history" class="hidden"><div class="card"><h2>学習カレンダー</h2><div class="row"><button class="secondary" onclick="changeMonth(-1)">‹ 前月</button><strong id="calendarTitle" style="text-align:center"></strong><button class="secondary" onclick="changeMonth(1)">翌月 ›</button></div><div id="calendar" style="margin-top:12px"></div><p class="inline-note" id="calendarDetail">日付を選ぶと学習時間が表示されるよ。</p></div><div class="card"><h2>過去の学習記録</h2><p class="muted">週が切り替わると、その週の記録が履歴に保存されるよ。</p><div id="historyList"></div></div><div class="card"><h2>データのバックアップ</h2><p class="muted">JSONファイルに保存して、必要なときに復元できるよ。</p><button onclick="exportData()">バックアップを書き出す</button><label for="importFile">バックアップから復元</label><input type="file" id="importFile" accept=".json,application/json" onchange="importData(event)"></div></section>
-<section id="settings" class="hidden"><div class="card"><h2>🎨 教科の追加・削除</h2><p class="muted">教科を削除しても過去の学習記録は保存データに残るよ。</p><div class="row"><div><label for="newSubject">新しい教科名</label><input id="newSubject" maxlength="30" placeholder="例：政治・経済"></div><div style="flex:0 0 auto;padding-top:24px"><button onclick="addSubject()">＋追加</button></div></div><div id="subjectManager"></div></div><div class="card"><h2>科目ごとのカラー設定</h2><div id="colorInputs"></div><hr><button class="secondary" onclick="resetColors()">初期カラーに戻す</button></div></section>
-<section id="account-panel" class="hidden"><div class="account-panel"><h2>📚 学習アカウント</h2><p class="muted">登録・ログイン機能。現在の学習記録はこのブラウザに保存されるよ。</p><form id="signup-form"><h3>新規登録</h3><label for="signup-name">表示名</label><input id="signup-name" type="text" maxlength="40" required autocomplete="nickname"><label for="signup-email">メールアドレス</label><input id="signup-email" type="email" required autocomplete="email"><label for="signup-password">パスワード（8文字以上）</label><input id="signup-password" type="password" required minlength="8" autocomplete="new-password"><button type="submit">新規登録</button></form><hr><form id="login-form"><h3>ログイン</h3><label for="login-email">メールアドレス</label><input id="login-email" type="email" required autocomplete="email"><label for="login-password">パスワード</label><input id="login-password" type="password" required autocomplete="current-password"><button type="submit">ログイン</button></form><div id="account-status" role="status" aria-live="polite" class="inline-note" style="margin-top:15px">ログインしていません。</div><button id="logout-button" type="button" hidden style="margin-top:10px">ログアウト</button></div></section>
+
+<section id="timer" class="hidden">
+  <div class="card">
+    <h2>学習タイマー</h2>
+    <label for="timerSubject">科目</label>
+    <select id="timerSubject"></select>
+    <div class="timer" id="clock">00:00:00</div>
+    <div class="actions">
+      <button id="startBtn" onclick="startTimer()">スタート</button>
+      <button class="secondary" onclick="pauseTimer()">停止して記録</button>
+      <button class="secondary" onclick="resetTimer()">リセット</button>
+    </div>
+    <p class="muted">「停止して記録」を押すと、その科目の今週の学習時間に加算されるよ。</p>
+  </div>
+</section>
+
+<section id="subjects" class="hidden">
+  <div class="card">
+    <h2>📚 全科目の進捗</h2>
+    <p class="muted">円グラフをタップすると、その科目を選択できるよ。</p>
+    <div id="allSubjectsGrid" class="subject-grid"></div>
+  </div>
+</section>
+
+<section id="tasks" class="hidden">
+  <div class="card">
+    <h2>タスクを追加</h2>
+    <label for="taskName">やること</label>
+    <input id="taskName" placeholder="例：英単語を50個覚える">
+    <div class="row">
+      <div><label for="taskSubject">科目</label><select id="taskSubject"></select></div>
+      <div><label for="taskDate">期限（任意）</label><input type="date" id="taskDate"></div>
+    </div>
+    <p><button onclick="addTask()">＋ タスクを追加</button></p>
+  </div>
+  <div class="card">
+    <h2>タスク一覧</h2>
+    <div id="taskList"></div>
+  </div>
+</section>
+
+<section id="goals" class="hidden">
+  <div class="card">
+    <h2>週間目標を設定</h2>
+    <p class="muted">科目ごとの目標時間を設定しよう。目標は週が変わっても引き継がれるよ。</p>
+    <div id="goalInputs"></div>
+    <p><button onclick="saveGoals()">目標を保存</button></p>
+  </div>
+</section>
+
+<section id="history" class="hidden">
+  <div class="card">
+    <h2>過去の学習記録</h2>
+    <p class="muted">週が切り替わると、その時点までの学習時間を履歴に保存するよ。</p>
+    <div id="historyList"></div>
+  </div>
+  <div class="card">
+    <h2>データのバックアップ</h2>
+    <p class="muted">大切な学習記録をファイルに保存できるよ。機種変更やブラウザのデータ消去に備えて、ときどきバックアップしてね。</p>
+    <button onclick="exportData()">バックアップを書き出す</button>
+    <label for="importFile">バックアップから復元</label>
+    <input type="file" id="importFile" accept=".json,application/json" onchange="importData(event)">
+  </div>
+</section>
+
+<section id="settings" class="hidden">
+    <div class="card">
+    <h2>📚 教科の追加・削除</h2>
+    <p class="muted">
+      教科を追加できます。削除しても過去の学習記録は消えません。
+    </p>
+
+    <div class="row">
+      <div>
+        <label for="newSubject">新しい教科名</label>
+        <input
+          id="newSubject"
+          type="text"
+          maxlength="30"
+          placeholder="例：政治・経済"
+        >
+      </div>
+      <div style="flex:0 0 auto;padding-top:24px">
+        <button onclick="addSubject()">＋追加</button>
+      </div>
+    </div>
+
+    <div id="subjectManager"></div>
+  </div>
+  <div class="card">
+    <h2>🎨 科目ごとのカラー設定</h2>
+    <p class="muted">好きな色を選んでね。色は自動で保存され、学習時間の円グラフと科目別進捗の両方に反映されるよ。</p>
+    <div id="colorInputs"></div>
+    <hr>
+    <h3>全体の円グラフ</h3>
+    <p class="muted">各科目の色が、学習時間の割合を表すよ。</p>
+    <div id="settingsPreview"></div>
+    <p><button class="secondary" onclick="resetColors()">初期カラーに戻す</button></p>
+  </div>
+</section>
+
 <script>
 "use strict";
-const DEFAULT_SUBJECTS=["英語","国語","数学","世界史","地理","理科","情報Ⅰ"];
-let SUBJECTS=(()=>{try{const s=JSON.parse(localStorage.getItem("studyPlannerSubjects"));if(Array.isArray(s)&&s.length&&s.every(x=>typeof x==="string"&&x.trim())&&new Set(s).size===s.length)return s;}catch(e){}return [...DEFAULT_SUBJECTS]})();
-const DEFAULT_COLORS={"英語":"#5275EF","国語":"#35B7A1","数学":"#F5B544","世界史":"#E681A8","地理":"#9B83E6","理科":"#E58A48","情報Ⅰ":"#4A9CC7"};
-const STORAGE_KEY="studyPlannerData",COLORS_KEY="studyPlannerColors";
-function jstDateKey(date=new Date()){const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);const o={};p.forEach(x=>{if(x.type!=="literal")o[x.type]=x.value});return `${o.year}-${o.month}-${o.day}`}
-function jstWeekKey(date=new Date()){const p=jstDateKey(date).split("-").map(Number),d=new Date(Date.UTC(p[0],p[1]-1,p[2]));d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`}
-function freshData(){return {week:jstWeekKey(),goals:Object.fromEntries(SUBJECTS.map(s=>[s,5])),logs:{},tasks:[],history:{},colors:{...DEFAULT_COLORS},dailyLogs:{}}}
-function readData(){try{const old=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!old)return freshData();const b=freshData(),d={...b,...old};d.goals={...b.goals,...(old.goals||{})};d.logs=old.logs||{};d.history=old.history||{};d.tasks=Array.isArray(old.tasks)?old.tasks:[];d.colors={...b.colors,...(old.colors||{})};d.dailyLogs=old.dailyLogs||{};try{const c=JSON.parse(localStorage.getItem(COLORS_KEY)||"null");if(c)d.colors={...d.colors,...c}}catch(e){}return d}catch(e){return freshData()}}
-let data=readData(),running=false,startedAt=0,elapsedBefore=0,timerInterval=null,mainTimerSwipeReady=false,touchStartX=0,calendarMonth=new Date(),selectedCalendarDate=jstDateKey();
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function validColor(v){return /^#[0-9a-fA-F]{6}$/.test(v||"")}
-function getColor(s){return validColor(data.colors[s])?data.colors[s]:(DEFAULT_COLORS[s]||"#7C8DA6")}
-function saveData(){try{const s=document.getElementById("timerSubject");if(s)data.lastTimerSubject=s.value;localStorage.setItem(STORAGE_KEY,JSON.stringify(data));localStorage.setItem(COLORS_KEY,JSON.stringify(data.colors))}catch(e){alert("保存できなかったよ。端末の空き容量を確認してね。")}}
-function currentLog(){if(!data.logs[data.week])data.logs[data.week]={};return data.logs[data.week]}
-function normalizeLog(log){const o={};SUBJECTS.forEach(s=>o[s]=Math.max(0,Number(log?.[s])||0));return o}
-function totalSeconds(log){return SUBJECTS.reduce((n,s)=>n+(Number(log?.[s])||0),0)}
-function minutesText(sec){const m=Math.floor((Number(sec)||0)/60),h=Math.floor(m/60),r=m%60;return h?`${h}時間${r}分`:`${m}分`}
-function rolloverWeek(){const w=jstWeekKey();if(!data.week)data.week=w;if(data.week!==w){data.history[data.week]=normalizeLog(data.logs[data.week]||{});data.week=w;if(!data.logs[w])data.logs[w]={};saveData()}if(!data.logs[data.week])data.logs[data.week]={}}
-function showTab(id){document.querySelectorAll("body>section").forEach(s=>s.classList.toggle("hidden",s.id!==id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));render()}
-function toggleTheme(){document.body.classList.toggle("dark");const dark=document.body.classList.contains("dark");localStorage.setItem("studyPlannerTheme",dark?"dark":"light");document.getElementById("themeBtn").textContent=dark?"☀️ 明るく":"🌙 暗め";document.querySelector('meta[name="theme-color"]').content=dark?"#111827":"#edf2ff"}
-function toggleFocus(){document.body.classList.toggle("focus-mode");const on=document.body.classList.contains("focus-mode");if(on)showTab("home");document.querySelectorAll(".focus-toggle").forEach(x=>x.textContent=on?"集中モードを終了":"集中モード")}
-function populateSelect(id){const el=document.getElementById(id);if(!el)return;const prev=el.value;el.innerHTML=SUBJECTS.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");el.value=SUBJECTS.includes(prev)?prev:(SUBJECTS.includes(data.lastTimerSubject)?data.lastTimerSubject:SUBJECTS[0])}
-function syncTimerSubject(s){const el=document.getElementById("timerSubject");if(el&&SUBJECTS.includes(s))el.value=s}
-function selectSubjectForTimer(s){if(!SUBJECTS.includes(s))return;if(running&&document.getElementById("timerSubject").value!==s)pauseTimer();syncTimerSubject(s);elapsedBefore=0;updateClock();showTab("home")}
-function donutSvg(percent,color,label,size=116,timerText=null){const p=Math.max(0,Math.min(100,Number(percent)||0)),r=39,c=2*Math.PI*r,off=c*(1-p/100);const center=timerText!==null?`<text x="50" y="43" text-anchor="middle" font-size="10" fill="currentColor">${esc(label)}</text><text x="50" y="61" text-anchor="middle" font-size="10" font-weight="750" fill="currentColor">${esc(timerText)}</text><text x="50" y="76" text-anchor="middle" font-size="10" font-weight="750" fill="${color}">${Math.round(p)}%</text>`:`<text x="50" y="46" text-anchor="middle" font-size="11" fill="currentColor">${esc(label)}</text><text x="50" y="64" text-anchor="middle" font-size="17" font-weight="750" fill="currentColor">${Math.round(p)}%</text>`;return `<svg viewBox="0 0 100 100" role="img" aria-label="${esc(label)} ${Math.round(p)}%" style="width:${size}px;max-width:100%;height:auto"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 50 50)"/>${center}</svg>`}
-function totalDonutSvg(log){const vals=SUBJECTS.map(s=>Math.max(0,Number(log[s])||0)),total=vals.reduce((a,b)=>a+b,0),r=39,c=2*Math.PI*r;if(!total)return `<div style="text-align:center"><svg viewBox="0 0 100 100" width="150"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="13"/><text x="50" y="48" text-anchor="middle" font-size="10" fill="currentColor">今週合計</text><text x="50" y="62" text-anchor="middle" font-size="11" fill="currentColor">0分</text></svg></div>`;let off=0;const seg=vals.map((v,i)=>{if(!v)return "";const len=c*v/total,x=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="${getColor(SUBJECTS[i])}" stroke-width="13" stroke-dasharray="${len} ${c-len}" stroke-dashoffset="${-off}" transform="rotate(-90 50 50)"/>`;off+=len;return x}).join("");return `<div style="text-align:center"><svg viewBox="0 0 100 100" width="150"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="13"/>${seg}<text x="50" y="46" text-anchor="middle" font-size="10" fill="currentColor">今週合計</text><text x="50" y="61" text-anchor="middle" font-size="11" font-weight="750" fill="currentColor">${minutesText(total)}</text></svg></div>`}
-function elapsedSeconds(){return elapsedBefore+(running?(Date.now()-startedAt)/1000:0)}
-function clockText(sec){sec=Math.max(0,Math.floor(sec));return [Math.floor(sec/3600),Math.floor(sec%3600/60),sec%60].map(n=>String(n).padStart(2,"0")).join(":")}
-function renderMainTimerDonut(){const c=document.getElementById("mainTimerDonut"),sel=document.getElementById("timerSubject");if(!c||!sel||!sel.value)return;const s=sel.value,log=currentLog(),sec=Number(log[s])||0,goal=Math.max(0,Number(data.goals[s])||0)*3600,pct=goal?Math.min(100,sec/goal*100):(sec?100:0);c.innerHTML=`<div role="button" tabindex="0" aria-label="${esc(s)}のタイマー" style="cursor:pointer;display:inline-block" onclick="toggleStudyTimer()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStudyTimer()}">${donutSvg(pct,getColor(s),s,220,clockText(elapsedSeconds()))}</div>`;document.getElementById("mainTimerStatus").textContent=running?"計測中：円グラフをタップすると停止して記録":"停止中：円グラフをタップすると計測開始";document.getElementById("mainTimerTime").textContent=clockText(elapsedSeconds());if(!mainTimerSwipeReady){const carousel=document.getElementById("mainTimerCarousel");carousel.addEventListener("touchstart",e=>touchStartX=e.changedTouches[0].screenX,{passive:true});carousel.addEventListener("touchend",e=>{const d=e.changedTouches[0].screenX-touchStartX;if(Math.abs(d)>50)changeMainSubject(d<0?1:-1)},{passive:true});mainTimerSwipeReady=true}}
-function changeMainSubject(dir){const sel=document.getElementById("timerSubject");if(!sel||!SUBJECTS.length)return;const i=SUBJECTS.indexOf(sel.value),next=SUBJECTS[(Math.max(0,i)+dir+SUBJECTS.length)%SUBJECTS.length];if(next===sel.value)return;if(running)pauseTimer();sel.value=next;elapsedBefore=0;updateClock()}
-function toggleStudyTimer(){if(running)pauseTimer();else startTimer()}
-function startTimer(){if(running)return;running=true;startedAt=Date.now();timerInterval=setInterval(updateClock,500);const b=document.getElementById("startBtn");if(b)b.textContent="計測中…";updateClock()}
-function pauseTimer(){if(!running&&elapsedBefore<=0)return;if(running){elapsedBefore+=(Date.now()-startedAt)/1000;running=false;clearInterval(timerInterval);timerInterval=null}const sec=Math.floor(elapsedBefore);if(sec>0){rolloverWeek();const s=document.getElementById("timerSubject").value;const log=currentLog();log[s]=(Number(log[s])||0)+sec;const day=jstDateKey();if(!data.dailyLogs[day])data.dailyLogs[day]={};data.dailyLogs[day][s]=(Number(data.dailyLogs[day][s])||0)+sec;saveData()}elapsedBefore=0;const b=document.getElementById("startBtn");if(b)b.textContent="スタート";updateClock();render()}
-function resetTimer(){if(running){running=false;clearInterval(timerInterval);timerInterval=null}elapsedBefore=0;updateClock()}
-function updateClock(){const t=clockText(elapsedSeconds());const c=document.getElementById("clock");if(c)c.textContent=t;const h=document.getElementById("homeClock");if(h)h.textContent=t;renderMainTimerDonut()}
-function addTask(){const input=document.getElementById("taskName"),name=input.value.trim();if(!name){alert("タスク名を入力してね。");return}data.tasks.push({id:Date.now(),name,subject:document.getElementById("taskSubject").value,date:document.getElementById("taskDate").value,done:false});input.value="";document.getElementById("taskDate").value="";saveData();render()}
-function toggleTask(id){const t=data.tasks.find(x=>Number(x.id)===Number(id));if(t)t.done=!t.done;saveData();render()}
-function deleteTask(id){if(confirm("このタスクを削除する？")){data.tasks=data.tasks.filter(t=>Number(t.id)!==Number(id));saveData();render()}}
-function saveGoals(){SUBJECTS.forEach(s=>{const el=document.getElementById("goal-"+s),v=Number(el.value);data.goals[s]=Math.max(0,Math.min(168,Number.isFinite(v)?v:0))});saveData();render();alert("週間目標を保存したよ！")}
-function changeColor(s,c){if(!validColor(c))return;data.colors[s]=c.toUpperCase();saveData();render()}
-function changeHexColor(s,c){if(!validColor(c)){alert("カラーコードは #5275EF のように入力してね。");render();return}changeColor(s,c)}
-function resetColors(){if(!confirm("すべての科目の色を初期設定に戻す？"))return;data.colors={...DEFAULT_COLORS};saveData();render()}
-function addSubject(){const el=document.getElementById("newSubject"),s=el.value.trim();if(!s){alert("教科名を入力してね。");return}if(SUBJECTS.includes(s)){alert("その教科は登録済みだよ。");return}SUBJECTS.push(s);localStorage.setItem("studyPlannerSubjects",JSON.stringify(SUBJECTS));data.goals[s]=5;data.colors[s]="#7C8DA6";saveData();el.value="";populateSelect("timerSubject");populateSelect("taskSubject");renderSubjectManager();render()}
-function deleteSubject(s){if(SUBJECTS.length<=1){alert("最後の1教科は削除できないよ。");return}if(!confirm(`「${s}」を教科一覧から削除する？過去データは保存データに残るよ。`))return;SUBJECTS=SUBJECTS.filter(x=>x!==s);localStorage.setItem("studyPlannerSubjects",JSON.stringify(SUBJECTS));if(document.getElementById("timerSubject").value===s)document.getElementById("timerSubject").value=SUBJECTS[0];saveData();populateSelect("timerSubject");populateSelect("taskSubject");renderSubjectManager();render()}
-function renderSubjectManager(){const c=document.getElementById("subjectManager");if(!c)return;c.innerHTML=SUBJECTS.map(s=>`<div class="task"><span class="task-title">${esc(s)}</span><button class="danger" onclick="deleteSubject('${esc(s)}')">削除</button></div>`).join("")}
-function weeklyChart(){const start=new Date(data.week+"T00:00:00Z"),days=[];for(let i=0;i<7;i++){const d=new Date(start);d.setUTCDate(d.getUTCDate()+i);const key=`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,"0")}-${String(d.getUTCDate()).padStart(2,"0")}`;const n=Object.values(data.dailyLogs[key]||{}).reduce((a,b)=>a+(Number(b)||0),0);days.push({key,label:["月","火","水","木","金","土","日"][i],n})}const max=Math.max(3600,...days.map(x=>x.n));return `<svg class="chart" viewBox="0 0 320 150" role="img" aria-label="今週の日別学習時間">${[0,1,2,3].map(i=>`<line x1="24" y1="${20+i*32}" x2="310" y2="${20+i*32}" stroke="var(--line)"/>`).join("")}${days.map((d,i)=>{const h=d.n/max*94,x=34+i*40;return `<rect x="${x}" y="${118-h}" width="22" height="${Math.max(2,h)}" rx="6" fill="var(--accent)" opacity="${d.n?0.9:0.18}"/><text x="${x+11}" y="137" font-size="10" text-anchor="middle" fill="var(--muted)">${d.label}</text>`}).join("")}</svg><div class="muted">日別の時間は、日付別記録が追加された日から反映されるよ。</div>`}
-function renderCalendar(){const y=calendarMonth.getFullYear(),m=calendarMonth.getMonth();document.getElementById("calendarTitle").textContent=`${y}年${m+1}月`;const first=new Date(y,m,1),start=(first.getDay()+6)%7,last=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate();let days=["月","火","水","木","金","土","日"].map(x=>`<div class="cal-head">${x}</div>`).join("");for(let i=0;i<42;i++){let n,key,other=false;if(i<start){n=prev-start+i+1;const d=new Date(y,m-1,n);key=jstDateKey(d);other=true}else if(i>=start+last){n=i-start-last+1;const d=new Date(y,m+1,n);key=jstDateKey(d);other=true}else{n=i-start+1;key=`${y}-${String(m+1).padStart(2,"0")}-${String(n).padStart(2,"0")}`}const total=Object.values(data.dailyLogs[key]||{}).reduce((a,b)=>a+(Number(b)||0),0);days+=`<button class="cal-day ${other?"other":""} ${total?"has-study":""} ${key===selectedCalendarDate?"selected":""}" onclick="selectCalendarDay('${key}')">${n}<span class="heat"></span></button>`}document.getElementById("calendar").innerHTML=`<div class="calendar">${days}</div>`;renderCalendarDetail()}
-function renderCalendarDetail(){const log=data.dailyLogs[selectedCalendarDate]||{},total=Object.values(log).reduce((a,b)=>a+(Number(b)||0),0);document.getElementById("calendarDetail").textContent=`${selectedCalendarDate}：合計 ${minutesText(total)}${total?"（"+SUBJECTS.filter(s=>log[s]).map(s=>`${s} ${minutesText(log[s])}`).join("・")+"）":""}`}
-function selectCalendarDay(key){selectedCalendarDate=key;renderCalendar()}
-function changeMonth(n){calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+n,1);renderCalendar()}
-function render(){rolloverWeek();const log=normalizeLog(currentLog()),total=totalSeconds(log),goal=SUBJECTS.reduce((n,s)=>n+Math.max(0,Number(data.goals[s])||0)*3600,0),done=data.tasks.filter(t=>t.done).length,today=data.dailyLogs[jstDateKey()]||{},todayTotal=Object.values(today).reduce((a,b)=>a+(Number(b)||0),0),pct=goal?Math.min(100,total/goal*100):0;
-document.getElementById("weekLabel").textContent=`今週：${data.week}（日本時間・月曜開始）`;document.getElementById("todayTime").textContent=minutesText(todayTotal);document.getElementById("totalTime").textContent=minutesText(total);document.getElementById("taskProgress").textContent=`${done}/${data.tasks.length}`;document.getElementById("goalPercent").textContent=`${Math.round(pct)}%`;document.getElementById("overallBar").style.width=`${pct}%`;document.getElementById("goalSummary").textContent=`週間目標 ${minutesText(goal)} の ${Math.round(pct)}% を達成`;document.getElementById("weeklyChart").innerHTML=weeklyChart();document.getElementById("totalDonut").innerHTML=totalDonutSvg(log);document.getElementById("totalLegend").innerHTML=SUBJECTS.map(s=>{const sec=log[s]||0,share=total?Math.round(sec/total*100):0;return `<div class="legend-item"><span class="dot" style="background:${getColor(s)}"></span><span>${esc(s)}：${minutesText(sec)}（${share}%）</span></div>`}).join("");
-document.getElementById("allSubjectsGrid").innerHTML=SUBJECTS.map(s=>{const sec=log[s]||0,g=Math.max(0,Number(data.goals[s])||0)*3600,p=g?Math.min(100,sec/g*100):(sec?100:0);return `<div class="subject-card" role="button" tabindex="0" onclick="selectSubjectForTimer('${esc(s)}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectSubjectForTimer('${esc(s)}')}">${donutSvg(p,getColor(s),s,116)}<div class="name">${esc(s)}</div><div class="detail">${minutesText(sec)} / ${minutesText(g)}</div></div>`}).join("");
-const pending=data.tasks.filter(t=>!t.done);document.getElementById("homeTasks").innerHTML=pending.length?pending.slice(0,5).map(t=>`<div class="task"><span class="dot" style="background:${getColor(t.subject)}"></span><span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}</span></span></div>`).join(""):`<p class="muted">未完了タスクはないよ！</p>`;
-document.getElementById("taskList").innerHTML=data.tasks.length?data.tasks.map(t=>`<div class="task ${t.done?"done":""}"><input type="checkbox" aria-label="完了" ${t.done?"checked":""} onchange="toggleTask(${Number(t.id)})"><span class="dot" style="background:${getColor(t.subject)}"></span><span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}${t.date?"・期限 "+esc(t.date):""}</span></span><button class="danger" onclick="deleteTask(${Number(t.id)})">削除</button></div>`).join(""):`<p class="muted">タスクを追加してみよう。</p>`;
-document.getElementById("goalInputs").innerHTML=SUBJECTS.map(s=>`<div class="row"><label style="flex:2" for="goal-${esc(s)}">${esc(s)}</label><div style="flex:1"><input type="number" min="0" max="168" step=".5" id="goal-${esc(s)}" value="${Number(data.goals[s]||0)}"></div><span class="muted">時間/週</span></div>`).join("");
-const hs=Object.keys(data.history).sort().reverse();document.getElementById("historyList").innerHTML=hs.length?hs.map(w=>{const l=normalizeLog(data.history[w]);return `<div class="task"><span class="task-title"><b>${esc(w)} の週</b><br><span class="muted">${SUBJECTS.map(s=>`${esc(s)} ${minutesText(l[s])}`).join(" ・ ")}</span></span><b>${minutesText(totalSeconds(l))}</b></div>`}).join(""):`<p class="muted">週が切り替わると、ここに過去の記録が表示されるよ。</p>`;
-document.getElementById("colorInputs").innerHTML=SUBJECTS.map(s=>`<div class="color-row"><span class="dot" style="background:${getColor(s)}"></span><span class="subject-name">${esc(s)}</span><input type="color" aria-label="${esc(s)}の色" value="${getColor(s)}" onchange="changeColor('${esc(s)}',this.value)"><input class="hex" aria-label="カラーコード" value="${getColor(s)}" maxlength="7" onchange="changeHexColor('${esc(s)}',this.value)"></div>`).join("");renderSubjectManager();renderMainTimerDonut();renderCalendar()}
-function exportData(){saveData();const blob=new Blob([JSON.stringify({data,subjects:SUBJECTS},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="study-planner-backup.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-function importData(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const incoming=JSON.parse(reader.result),payload=incoming.data||incoming;if(!payload||!payload.goals||!payload.tasks||!payload.logs)throw new Error("invalid");if(!confirm("現在のデータをバックアップ内容で置き換える？先に今のデータもバックアップしてね。"))return;data={...freshData(),...payload,goals:{...freshData().goals,...payload.goals},logs:payload.logs||{},history:payload.history||{},tasks:Array.isArray(payload.tasks)?payload.tasks:[],colors:{...DEFAULT_COLORS,...(payload.colors||{})},dailyLogs:payload.dailyLogs||{}};if(Array.isArray(incoming.subjects)&&incoming.subjects.length){SUBJECTS=incoming.subjects;localStorage.setItem("studyPlannerSubjects",JSON.stringify(SUBJECTS))}saveData();populateSelect("timerSubject");populateSelect("taskSubject");render();alert("バックアップから復元したよ！")}catch(e){alert("このファイルは読み込めなかったよ。正しいバックアップか確認してね。")}finally{event.target.value=""}};reader.readAsText(file)}
-populateSelect("timerSubject");populateSelect("taskSubject");if(SUBJECTS.includes(data.lastTimerSubject))document.getElementById("timerSubject").value=data.lastTimerSubject;
-document.getElementById("timerSubject").addEventListener("change",e=>{if(running)pauseTimer();elapsedBefore=0;updateClock();saveData()});
-if(localStorage.getItem("studyPlannerTheme")==="dark"){document.body.classList.add("dark");document.getElementById("themeBtn").textContent="☀️ 明るく"}
-render();setInterval(()=>{if(jstWeekKey()!==data.week){rolloverWeek();render()}},30000);document.addEventListener("visibilitychange",()=>{if(!document.hidden){rolloverWeek();updateClock();render()}});
+
+const DEFAULT_SUBJECTS = [
+  "英語", "国語", "数学", "世界史", "地理", "理科", "情報Ⅰ"
+];
+
+let SUBJECTS = (() => {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem("studyPlannerSubjects")
+    );
+
+    if (
+      Array.isArray(saved) &&
+      saved.length > 0 &&
+      saved.every(s => typeof s === "string" && s.trim() !== "") &&
+      new Set(saved).size === saved.length
+    ) {
+      return saved;
+    }
+  } catch (e) {}
+
+  return [...DEFAULT_SUBJECTS];
+})();
+const DEFAULT_COLORS = {
+  "英語":"#5275EF",
+  "国語":"#35B7A1",
+  "数学":"#F5B544",
+  "世界史":"#E681A8",
+  "地理":"#9B83E6",
+  "理科":"#E58A48",
+  "情報Ⅰ":"#4A9CC7"
+};
+const STORAGE_KEY = "studyPlannerData";
+const COLORS_KEY = "studyPlannerColors";
+
+function freshData(){
+  return {
+    week: jstWeekKey(),
+    goals: Object.fromEntries(SUBJECTS.map(s=>[s,5])),
+    logs: {},
+    tasks: [],
+    history: {},
+    colors: {...DEFAULT_COLORS}
+  };
+}
+
+function jstDateParts(date = new Date()){
+  const parts = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Tokyo",
+    year:"numeric",month:"2-digit",day:"2-digit"
+  }).formatToParts(date);
+  const out = {};
+  parts.forEach(p=>{if(p.type!=="literal")out[p.type]=p.value;});
+  return {year:Number(out.year),month:Number(out.month),day:Number(out.day)};
+}
+
+function jstWeekKey(date = new Date()){
+  const p = jstDateParts(date);
+  const utc = new Date(Date.UTC(p.year,p.month-1,p.day));
+  const day = (utc.getUTCDay()+6)%7;
+  utc.setUTCDate(utc.getUTCDate()-day);
+  return `${utc.getUTCFullYear()}-${String(utc.getUTCMonth()+1).padStart(2,"0")}-${String(utc.getUTCDate()).padStart(2,"0")}`;
+}
+
+function readData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return freshData();
+    const old = JSON.parse(raw);
+    const base = freshData();
+    const d = {...base,...old};
+    d.goals = {...base.goals,...(old.goals||{})};
+    d.logs = old.logs || {};
+    d.history = old.history || {};
+    d.tasks = Array.isArray(old.tasks) ? old.tasks : [];
+    d.colors = {...base.colors,...(old.colors||{})};
+    // 旧バージョンで別キーに保存した色があれば取り込む
+    try{
+      const extra = JSON.parse(localStorage.getItem(COLORS_KEY)||"null");
+      if(extra) d.colors = {...d.colors,...extra};
+    }catch(e){}
+    return d;
+  }catch(e){
+    return freshData();
+  }
+}
+
+let data = readData();
+let running = false;
+let startedAt = 0;
+let elapsedBefore = 0;
+let timerInterval = null;
+
+function saveData(){
+  
+  try{
+    data.lastTimerSubject = document.getElementById("timerSubject").value;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    localStorage.setItem(COLORS_KEY,JSON.stringify(data.colors));
+  }catch(e){
+    alert("データを保存できなかったよ。端末の空き容量を確認してね。");
+  }
+}
+
+function normalizeLog(log){
+  const out = {};
+  SUBJECTS.forEach(s=>{out[s]=Math.max(0,Number(log?.[s])||0);});
+  return out;
+}
+
+function currentLog(){
+  if(!data.logs[data.week]) data.logs[data.week] = {};
+  return data.logs[data.week];
+}
+
+function rolloverWeek(){
+  const current = jstWeekKey();
+  if(!data.week) data.week = current;
+
+  if(data.week !== current){
+    // 前の週の学習記録を履歴へ退避
+    data.history[data.week] = normalizeLog(data.logs[data.week]||{});
+    data.week = current;
+    if(!data.logs[current]) data.logs[current] = {};
+    // 古い未完了タスクはそのまま維持
+    // 目標・カラー設定もそのまま維持
+    saveData();
+  }
+  if(!data.logs[data.week]) data.logs[data.week] = {};
+}
+
+function totalSeconds(log){
+  return SUBJECTS.reduce((sum,s)=>sum+(Number(log?.[s])||0),0);
+}
+function minutesText(seconds){
+  const m = Math.floor((Number(seconds)||0)/60);
+  const h = Math.floor(m/60);
+  const rest = m%60;
+  return h>0 ? `${h}時間${rest}分` : `${m}分`;
+}
+function esc(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function validColor(value){
+  return /^#[0-9a-fA-F]{6}$/.test(value||"");
+}
+function getColor(subject){
+  return validColor(data.colors[subject])
+    ? data.colors[subject]
+    : (DEFAULT_COLORS[subject] || "#7C8DA6");
+}
+function showTab(id){
+  
+
+
+  document.querySelectorAll("body>section").forEach(el=>{
+    el.classList.toggle("hidden",el.id!==id);
+  });
+  document.querySelectorAll("nav button").forEach(btn=>{
+    btn.classList.toggle("secondary",btn.dataset.tab!==id);
+  });
+  render();
+}
+
+function selectSubjectForTimer(subject) {
+  if (!SUBJECTS.includes(subject)) return;
+
+  const timerSelect = document.getElementById("timerSubject");
+  if (timerSelect) {
+    timerSelect.value = subject;
+  }
+
+  const homeSelect = document.getElementById("homeTimerSubject");
+  if (homeSelect) {
+    homeSelect.value = subject;
+  }
+
+  elapsedBefore = 0;
+  updateClock();
+  render();
+  showTab("home");
+}
+
+  
+function populateSelect(id) {
+  const select = document.getElementById(id);
+  if (!select) return;
+
+  const previousValue = select.value;
+
+  select.innerHTML = SUBJECTS.map(s =>
+    `<option value="${esc(s)}">${esc(s)}</option>`
+  ).join("");
+
+  if (SUBJECTS.includes(previousValue)) {
+    select.value = previousValue;
+  } else {
+    select.value = SUBJECTS[0];
+  }
+}
+
+function renderSubjectManager() {
+  const container = document.getElementById("subjectManager");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  SUBJECTS.forEach(subject => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.style.marginTop = "8px";
+
+    const name = document.createElement("span");
+    name.textContent = subject;
+    name.style.flex = "1";
+
+    const button = document.createElement("button");
+    button.textContent = "削除";
+    button.type = "button";
+    button.onclick = () => deleteSubject(subject);
+
+    row.append(name, button);
+    container.appendChild(row);
+  });
+}
+
+function addSubject() {
+  const input = document.getElementById("newSubject");
+  const name = input.value.trim();
+
+  if (!name) {
+    alert("教科名を入力してね。");
+    return;
+  }
+
+  if (SUBJECTS.includes(name)) {
+    alert("その教科はすでに登録されているよ。");
+    return;
+  }
+
+  SUBJECTS.push(name);
+  localStorage.setItem("studyPlannerSubjects", JSON.stringify(SUBJECTS));
+
+  data.goals[name] = data.goals[name] ?? 5;
+  data.colors[name] = data.colors[name] ?? "#7C8DA6";
+
+  saveData();
+  input.value = "";
+
+  populateSelect("timerSubject");
+  populateSelect("taskSubject");
+  renderSubjectManager();
+  render();
+}
+
+function deleteSubject(name) {
+  if (SUBJECTS.length <= 1) {
+    alert("最後の1教科は削除できないよ。");
+    return;
+  }
+
+  if (!confirm(`「${name}」を教科一覧から削除する？`)) return;
+
+  SUBJECTS = SUBJECTS.filter(subject => subject !== name);
+  localStorage.setItem("studyPlannerSubjects", JSON.stringify(SUBJECTS));
+
+  saveData();
+  populateSelect("timerSubject");
+  populateSelect("taskSubject");
+  renderSubjectManager();
+  render();
+}
+
+function donutSvg(percent, color, label, size = 116, timerText = null) {
+  const p = Math.max(0, Math.min(100, Number(percent) || 0));
+  const r = 39;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference * (1 - p / 100);
+
+  const centerText = timerText
+    ? `<text x="50" y="46" text-anchor="middle" font-size="10" fill="currentColor">${esc(label)}</text>
+       <text x="50" y="62" text-anchor="middle" font-size="11" font-weight="750" fill="currentColor">${esc(timerText)}</text>
+       <text x="50" y="76" text-anchor="middle" font-size="10" font-weight="750" fill="${color}">${Math.round(p)}%</text>`
+    : `<text x="50" y="46" text-anchor="middle" font-size="11" fill="currentColor">${esc(label)}</text>
+       <text x="50" y="64" text-anchor="middle" font-size="17" font-weight="750" fill="currentColor">${Math.round(p)}%</text>`;
+
+  return `<svg viewBox="0 0 100 100" role="img"
+    aria-label="${esc(label)} ${Math.round(p)}%"
+    style="width:${size}px;max-width:100%;height:auto">
+    <circle cx="50" cy="50" r="${r}" fill="none"
+      stroke="#e8edf5" stroke-width="10"/>
+    <circle cx="50" cy="50" r="${r}" fill="none"
+      stroke="${color}" stroke-width="10" stroke-linecap="round"
+      stroke-dasharray="${circumference}"
+      stroke-dashoffset="${offset}"
+      transform="rotate(-90 50 50)"/>
+    ${centerText}
+  </svg>`;
+}
+
+
+function totalDonutSvg(log){
+  const values = SUBJECTS.map(s=>Math.max(0,Number(log[s])||0));
+  const total = values.reduce((a,b)=>a+b,0);
+  const r=39,circ=2*Math.PI*r;
+  if(total<=0){
+    return `<div style="display:flex;justify-content:center"><svg viewBox="0 0 100 100" width="150" role="img" aria-label="学習記録はまだありません">
+      <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8edf5" stroke-width="13"/>
+      <text x="50" y="48" text-anchor="middle" font-size="10" fill="currentColor">学習時間</text>
+      <text x="50" y="62" text-anchor="middle" font-size="11" fill="currentColor">0分</text>
+    </svg></div>`;
+  }
+  let offset=0;
+  const segments=values.map((v,i)=>{
+    if(v<=0)return "";
+    const len=circ*v/total;
+    const segment=`<circle cx="50" cy="50" r="${r}" fill="none" stroke="${getColor(SUBJECTS[i])}" stroke-width="13"
+      stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" transform="rotate(-90 50 50)"/>`;
+    offset+=len;
+    return segment;
+  }).join("");
+  return `<div style="display:flex;justify-content:center"><svg viewBox="0 0 100 100" width="150" role="img" aria-label="科目別学習時間の割合">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="#e8edf5" stroke-width="13"/>
+    ${segments}
+    <text x="50" y="46" text-anchor="middle" font-size="10" fill="currentColor">今週合計</text>
+    <text x="50" y="61" text-anchor="middle" font-size="12" font-weight="750" fill="currentColor">${minutesText(total)}</text>
+  </svg></div>`;
+}
+
+function renderMainTimerDonut() {
+  const container = document.getElementById("mainTimerDonut");
+  const select = document.getElementById("timerSubject");
+
+  if (!container || !select || !select.value) return;
+
+  const subject = select.value;
+  const log = currentLog();
+  const sec = Number(log[subject]) || 0;
+  const goal = Math.max(0, Number(data.goals[subject]) || 0) * 3600;
+  const pct = goal > 0
+    ? Math.min(100, sec / goal * 100)
+    : (sec > 0 ? 100 : 0);
+
+  container.innerHTML = `
+    <div
+      role="button"
+      tabindex="0"
+      aria-label="${esc(subject)}のタイマー"
+      style="cursor:pointer;display:inline-block;"
+      onclick="toggleStudyTimer()"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStudyTimer();}">
+      ${donutSvg(pct, getColor(subject), subject, 220, clockText(elapsedSeconds()))}
+    </div>
+  `;
+
+  const status = document.getElementById("mainTimerStatus");
+  if (status) {
+    status.textContent = running
+      ? "計測中：円グラフをタップすると停止して記録"
+      : "停止中：円グラフをタップすると計測開始";
+  }
+}
+
+function render(){
+  rolloverWeek();
+  const log = normalizeLog(currentLog());
+  const total = totalSeconds(log);
+  const goalSeconds = SUBJECTS.reduce((sum,s)=>sum+Math.max(0,Number(data.goals[s])||0)*3600,0);
+  const done = data.tasks.filter(t=>t.done).length;
+
+  document.getElementById("weekLabel").textContent =
+    `今週：${data.week}（日本時間・月曜開始）`;
+  document.getElementById("totalTime").textContent = minutesText(total);
+  document.getElementById("taskProgress").textContent = `${done}/${data.tasks.length}`;
+  const overall = goalSeconds ? Math.min(100,total/goalSeconds*100) : 0;
+  document.getElementById("overallBar").style.width = `${overall}%`;
+  document.getElementById("goalSummary").textContent =
+    `週間目標 ${minutesText(goalSeconds)} の ${Math.round(overall)}% を達成`;
+
+  document.getElementById("totalDonut").innerHTML = totalDonutSvg(log);
+  document.getElementById("totalLegend").innerHTML = SUBJECTS.map(s=>{
+    const sec=log[s]||0;
+    const share=total ? Math.round(sec/total*100) : 0;
+    return `<div class="legend-item"><span class="dot" style="background:${getColor(s)}"></span><span>${esc(s)}：${minutesText(sec)}（${share}%）</span></div>`;
+  }).join("");
+
+  
+  
+
+
+  document.getElementById("allSubjectsGrid").innerHTML = SUBJECTS.map(s => {
+    const sec = log[s] || 0;
+    const goal = Math.max(0, Number(data.goals[s]) || 0) * 3600;
+    const pct = goal > 0 ? Math.min(100, sec / goal * 100) : (sec > 0 ? 100 : 0);
+
+    return `<div class="subject-card"
+      role="button"
+      tabindex="0"
+      data-subject="${esc(s)}"
+      aria-label="${esc(s)}の進捗を選択"
+      onclick="selectSubjectForTimer(this.dataset.subject)"
+      onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectSubjectForTimer(this.dataset.subject)}">
+      ${donutSvg(pct, getColor(s), s, 116)}
+      <div class="name">${esc(s)}</div>
+      <div class="detail">${minutesText(sec)} / ${minutesText(goal)}</div>
+    </div>`;
+  }).join("");
+
+  const pending=data.tasks.filter(t=>!t.done);
+  document.getElementById("homeTasks").innerHTML = pending.length
+    ? pending.slice(0,5).map(t=>`<div class="task"><span class="dot" style="background:${getColor(t.subject)}"></span><span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}</span></span></div>`).join("")
+    : `<p class="muted">未完了タスクはないよ！</p>`;
+
+  document.getElementById("taskList").innerHTML = data.tasks.length
+    ? data.tasks.map(t=>`<div class="task ${t.done?"done":""}">
+        <input type="checkbox" aria-label="完了" ${t.done?"checked":""} onchange="toggleTask(${Number(t.id)})">
+        <span class="dot" style="background:${getColor(t.subject)}"></span>
+        <span class="task-title">${esc(t.name)}<br><span class="muted">${esc(t.subject)}${t.date?"・期限 "+esc(t.date):""}</span></span>
+        <button class="danger" onclick="deleteTask(${Number(t.id)})">削除</button>
+      </div>`).join("")
+    : `<p class="muted">タスクを追加してみよう。</p>`;
+
+  document.getElementById("goalInputs").innerHTML = SUBJECTS.map(s=>
+    `<div class="row">
+      <label style="flex:2" for="goal-${s}">${esc(s)}</label>
+      <div style="flex:1"><input type="number" min="0" max="168" step="0.5" id="goal-${s}" value="${Number(data.goals[s]||0)}"></div>
+      <span class="muted">時間/週</span>
+    </div>`
+  ).join("");
+
+  const historyEntries=Object.keys(data.history).sort().reverse();
+  document.getElementById("historyList").innerHTML = historyEntries.length
+    ? historyEntries.map(w=>{
+        const l=normalizeLog(data.history[w]);
+        return `<div class="task"><span class="task-title"><b>${esc(w)} の週</b><br><span class="muted">${SUBJECTS.map(s=>`${esc(s)} ${minutesText(l[s])}`).join(" ・ ")}</span></span><b>${minutesText(totalSeconds(l))}</b></div>`;
+      }).join("")
+    : `<p class="muted">週が切り替わると、ここに過去の記録が表示されるよ。</p>`;
+
+  document.getElementById("colorInputs").innerHTML=SUBJECTS.map(s=>
+    `<div class="color-row">
+      <span class="dot" style="background:${getColor(s)}"></span>
+      <span class="subject-name">${esc(s)}</span>
+      <input type="color" aria-label="${esc(s)}の色" value="${getColor(s)}" onchange="changeColor('${s}',this.value)">
+      <input class="hex" aria-label="${esc(s)}のカラーコード" value="${getColor(s)}" maxlength="7" onchange="changeHexColor('${s}',this.value)">
+    </div>`
+  ).join("");
+  document.getElementById("settingsPreview").innerHTML=totalDonutSvg(log);
+  const timerSelect = document.getElementById("timerSubject");
+if (timerSelect && !timerSelect.value && SUBJECTS.length > 0) {
+  timerSelect.value = SUBJECTS[0];
+}
+
+renderMainTimerDonut();
+}
+
+function addTask(){
+  const input=document.getElementById("taskName");
+  const name=input.value.trim();
+  if(!name){alert("タスク名を入力してね。");return;}
+  data.tasks.push({
+    id:Date.now(),
+    name,
+    subject:document.getElementById("taskSubject").value,
+    date:document.getElementById("taskDate").value,
+    done:false
+  });
+  input.value="";
+  document.getElementById("taskDate").value="";
+  saveData();render();
+}
+function toggleTask(id){
+  const task=data.tasks.find(t=>Number(t.id)===Number(id));
+  if(task)task.done=!task.done;
+  saveData();render();
+}
+function deleteTask(id){
+  if(confirm("このタスクを削除する？")){
+    data.tasks=data.tasks.filter(t=>Number(t.id)!==Number(id));
+    saveData();render();
+  }
+}
+function saveGoals(){
+  SUBJECTS.forEach(s=>{
+    const el=document.getElementById("goal-"+s);
+    const value=Number(el.value);
+    data.goals[s]=Math.max(0,Math.min(168,Number.isFinite(value)?value:0));
+  });
+  saveData();render();
+  alert("週間目標を保存したよ！");
+}
+function changeColor(subject,color){
+  if(!validColor(color))return;
+  data.colors[subject]=color.toUpperCase();
+  saveData();render();
+}
+function changeHexColor(subject,color){
+  if(!validColor(color)){
+    alert("カラーコードは #5275EF のように入力してね。");
+    render();return;
+  }
+  changeColor(subject,color);
+}
+function resetColors(){
+  if(!confirm("すべての科目の色を初期設定に戻す？"))return;
+  data.colors={...DEFAULT_COLORS};
+  saveData();render();
+}
+
+function clockText(sec){
+  sec=Math.max(0,Math.floor(sec));
+  return [Math.floor(sec/3600),Math.floor(sec%3600/60),sec%60]
+    .map(n=>String(n).padStart(2,"0")).join(":");
+}
+function elapsedSeconds(){
+  return elapsedBefore+(running?(Date.now()-startedAt)/1000:0);
+}
+function updateClock() {
+  const text = clockText(elapsedSeconds());
+
+  document.getElementById("clock").textContent = text;
+
+  const homeClock = document.getElementById("homeClock");
+  if (homeClock) {
+    homeClock.textContent = text;
+  }
+  renderMainTimerDonut();
+}
+
+
+function syncTimerSubject(subject) {
+  const timerSelect = document.getElementById("timerSubject");
+  const homeSelect = document.getElementById("homeTimerSubject");
+
+  if (!SUBJECTS.includes(subject)) return;
+
+  if (timerSelect) {
+    timerSelect.value = subject;
+  }
+
+  if (homeSelect) {
+    homeSelect.value = subject;
+  }
+}
+
+
+function startSubjectTimer(subject) {
+  syncTimerSubject(subject);
+
+  if (!running) {
+    startTimer();
+  }
+
+  showTab("home");
+}
+function startTimer() {
+  if (running) return;
+
+  running = true;
+  startedAt = Date.now();
+
+  timerInterval = setInterval(updateClock, 500);
+
+  document.getElementById("startBtn").textContent = "計測中…";
+  updateClock();
+}
+function pauseTimer(){
+  if(!running && elapsedBefore<=0)return;
+  if(running){
+    elapsedBefore+=(Date.now()-startedAt)/1000;
+    running=false;
+    clearInterval(timerInterval);
+    timerInterval=null;
+  }
+  const seconds=Math.floor(elapsedBefore);
+  if(seconds>0){
+    rolloverWeek();
+    const subject=document.getElementById("timerSubject").value;
+    const log=currentLog();
+    log[subject]=(Number(log[subject])||0)+seconds;
+    saveData();
+  }
+  elapsedBefore=0;
+  document.getElementById("startBtn").textContent="スタート";
+  updateClock();render();
+}
+  
+function toggleStudyTimer() {
+  if (running) {
+    pauseTimer();
+  } else {
+    startTimer();
+  }
+}
+  
+let mainTimerSwipeReady = false;
+let mainTimerTouchStartX = 0;
+
+function renderMainTimerDonut() {
+  const container = document.getElementById("mainTimerDonut");
+  if (!container) return;
+
+  const select = document.getElementById("timerSubject");
+  if (!select || !select.value) return;
+
+  const subject = select.value;
+  const log = currentLog();
+  const sec = Number(log[subject]) || 0;
+  const goal = Math.max(0, Number(data.goals[subject]) || 0) * 3600;
+  const pct = goal > 0
+    ? Math.min(100, sec / goal * 100)
+    : (sec > 0 ? 100 : 0);
+
+  const timerText = clockText(elapsedSeconds());
+
+  container.innerHTML = `
+    <div role="button"
+         tabindex="0"
+         aria-label="${esc(subject)}のタイマー"
+         style="cursor:pointer;display:inline-block;"
+         onclick="toggleStudyTimer()"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleStudyTimer();}">
+      ${donutSvg(pct, getColor(subject), subject, 220, timerText)}
+    </div>
+  `;
+
+  const status = document.getElementById("mainTimerStatus");
+  if (status) {
+    status.textContent = running
+      ? "計測中：円グラフをタップすると停止して記録"
+      : "停止中：円グラフをタップすると計測開始";
+  }
+
+  if (!mainTimerSwipeReady) {
+    const carousel = document.getElementById("mainTimerCarousel");
+    if (carousel) {
+      carousel.addEventListener("touchstart", event => {
+        mainTimerTouchStartX = event.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener("touchend", event => {
+        const endX = event.changedTouches[0].screenX;
+        const diff = endX - mainTimerTouchStartX;
+
+        if (Math.abs(diff) > 50) {
+          changeMainSubject(diff < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+
+      mainTimerSwipeReady = true;
+    }
+  }
+}
+
+function changeMainSubject(direction) {
+  if (!Array.isArray(SUBJECTS) || SUBJECTS.length === 0) return;
+
+  const select = document.getElementById("timerSubject");
+  if (!select) return;
+
+  const currentIndex = SUBJECTS.indexOf(select.value);
+  const safeIndex = currentIndex < 0 ? 0 : currentIndex;
+  const nextIndex =
+    (safeIndex + direction + SUBJECTS.length) % SUBJECTS.length;
+  const nextSubject = SUBJECTS[nextIndex];
+
+  if (nextSubject === select.value) return;
+
+  if (running) {
+    pauseTimer();
+  }
+
+  select.value = nextSubject;
+
+  const homeSelect = document.getElementById("homeTimerSubject");
+  if (homeSelect) homeSelect.value = nextSubject;
+
+  elapsedBefore = 0;
+  updateClock();
+  renderMainTimerDonut();
+}
+
+function handleMainSubjectTap(subject) {
+  if (!SUBJECTS.includes(subject)) return;
+
+  const timerSelect = document.getElementById("timerSubject");
+
+  if (timerSelect.value !== subject) {
+    if (running) {
+      pauseTimer();
+    }
+
+    timerSelect.value = subject;
+    elapsedBefore = 0;
+    updateClock();
+    render();
+    return;
+  }
+
+  toggleStudyTimer();
+}
+function resetTimer(){
+  running=false;
+  clearInterval(timerInterval);
+  timerInterval=null;
+  elapsedBefore=0;
+  document.getElementById("startBtn").textContent="スタート";
+  updateClock();
+}
+
+function exportData(){
+  saveData();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="study-planner-backup.json";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function importData(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const incoming=JSON.parse(reader.result);
+      if(!incoming || !incoming.goals || !incoming.tasks || !incoming.logs){
+        throw new Error("invalid backup");
+      }
+      if(!confirm("現在のデータをバックアップの内容で置き換える？先に今のデータをバックアップしてね。"))return;
+      const base=freshData();
+      data={
+        ...base,...incoming,
+        goals:{...base.goals,...incoming.goals},
+        logs:incoming.logs||{},
+        history:incoming.history||{},
+        tasks:Array.isArray(incoming.tasks)?incoming.tasks:[],
+        colors:{...base.colors,...(incoming.colors||{})}
+      };
+      rolloverWeek();saveData();render();
+      alert("バックアップから復元したよ！");
+    }catch(e){
+      alert("このファイルは読み込めなかったよ。正しいバックアップファイルか確認してね。");
+    }finally{
+      event.target.value="";
+    }
+  };
+  reader.readAsText(file);
+}
+
+// 初期化
+populateSelect("timerSubject");
+populateSelect("homeTimerSubject");
+populateSelect("taskSubject");
+
+syncTimerSubject(SUBJECTS.includes(data.lastTimerSubject)
+  ? data.lastTimerSubject
+  : SUBJECTS[0]);
+
+document.getElementById("timerSubject").addEventListener("change", e => {
+  syncTimerSubject(e.target.value);
+});
+renderSubjectManager();
+rolloverWeek();
+render();
+
+// アプリを開いたまま週が変わった場合にも定期的に確認する
+setInterval(()=>{
+  if(jstWeekKey()!==data.week){
+    rolloverWeek();
+    render();
+  }
+},30000);
+
+// タイマー計測中に画面へ戻った場合も表示を更新
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){
+    rolloverWeek();
+    updateClock();
+    render();
+  }
+});
 </script>
+  
+<!-- SupabaseのJavaScriptライブラリ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const SUPABASE_URL="https://wcmtrkimrxjfnoeevkqu.supabase.co";
-const SUPABASE_KEY="sb_publishable_GkTZ7Mb6HNEKtsD_uCVPSA_W-wev20w";
-if(window.supabase){const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);(()=>{const status=document.getElementById("account-status"),logout=document.getElementById("logout-button"),signup=document.getElementById("signup-form"),login=document.getElementById("login-form");function msg(s){status.textContent=s}function setUser(u){if(u){msg("ログイン中："+u.email);logout.hidden=false}else{msg("ログインしていません。");logout.hidden=true}}signup.addEventListener("submit",async e=>{e.preventDefault();const display_name=document.getElementById("signup-name").value.trim(),email=document.getElementById("signup-email").value.trim(),password=document.getElementById("signup-password").value;if(!display_name){msg("表示名を入力してください。");return}msg("登録しています…");try{const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{display_name}}});if(error)throw error;if(data.session){setUser(data.user);msg("登録できました！ログイン中："+data.user.email)}else msg("登録を受け付けました。確認メール内のリンクを開いてください。")}catch(e){msg("登録できませんでした："+e.message)}});login.addEventListener("submit",async e=>{e.preventDefault();msg("ログインしています…");try{const {data,error}=await supabaseClient.auth.signInWithPassword({email:document.getElementById("login-email").value.trim(),password:document.getElementById("login-password").value});if(error)throw error;setUser(data.user);login.reset()}catch(e){msg("ログインできませんでした："+e.message)}});logout.addEventListener("click",async()=>{msg("ログアウトしています…");try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;setUser(null)}catch(e){msg("ログアウトできませんでした："+e.message)}});supabaseClient.auth.getUser().then(({data,error})=>{if(error)msg("ログイン状態を確認できませんでした。");else setUser(data.user)});supabaseClient.auth.onAuthStateChange((_event,session)=>setUser(session?.user??null))})()}else{document.getElementById("account-status").textContent="アカウント機能の読み込みに失敗しました。インターネット接続を確認してね。"}
+  const SUPABASE_URL = "https://wcmtrkimrxjfnoeevkqu.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_GkTZ7Mb6HNEKtsD_uCVPSA_W-wev20w";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 </script>
+
+<!-- アカウント機能 -->
+<section id="account-panel" style="
+  max-width: 440px;
+  margin: 24px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  font-family: sans-serif;
+">
+  <h2>📚 学習アカウント</h2>
+  <p>アカウントを作って、学習記録を管理しよう。</p>
+
+  <form id="signup-form">
+    <h3>新規登録</h3>
+
+    <label for="signup-name">表示名</label>
+    <input id="signup-name" type="text" maxlength="40"
+      required autocomplete="nickname"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="signup-email">メールアドレス</label>
+    <input id="signup-email" type="email" required
+      autocomplete="email"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="signup-password">パスワード（8文字以上）</label>
+    <input id="signup-password" type="password" required minlength="8"
+      autocomplete="new-password"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <button type="submit" style="padding:10px 16px;">新規登録</button>
+  </form>
+
+  <hr style="margin:24px 0;">
+
+  <form id="login-form">
+    <h3>ログイン</h3>
+
+    <label for="login-email">メールアドレス</label>
+    <input id="login-email" type="email" required
+      autocomplete="email"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <label for="login-password">パスワード</label>
+    <input id="login-password" type="password" required
+      autocomplete="current-password"
+      style="box-sizing:border-box;width:100%;padding:10px;margin:6px 0 12px;">
+
+    <button type="submit" style="padding:10px 16px;">ログイン</button>
+  </form>
+
+  <div id="account-status" role="status" aria-live="polite"
+    style="margin-top:18px;overflow-wrap:anywhere;">
+    ログインしていません。
+  </div>
+
+  <button id="logout-button" type="button" hidden
+    style="padding:10px 16px;margin-top:10px;">
+    ログアウト
+  </button>
+</section>
+
+<script>
+(() => {
+  const status = document.getElementById("account-status");
+  const logoutButton = document.getElementById("logout-button");
+  const signupForm = document.getElementById("signup-form");
+  const loginForm = document.getElementById("login-form");
+
+  function showMessage(message) {
+    status.textContent = message;
+  }
+
+  function setLoggedIn(user) {
+    if (user) {
+      showMessage("ログイン中：" + user.email);
+      logoutButton.hidden = false;
+    } else {
+      showMessage("ログインしていません。");
+      logoutButton.hidden = true;
+    }
+  }
+
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const displayName =
+      document.getElementById("signup-name").value.trim();
+    const email =
+      document.getElementById("signup-email").value.trim();
+    const password =
+      document.getElementById("signup-password").value;
+
+    if (!displayName) {
+      showMessage("表示名を入力してください。");
+      return;
+    }
+
+    showMessage("登録しています…");
+
+    try {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName }
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        setLoggedIn(data.user);
+        showMessage("登録できました！ログイン中：" + data.user.email);
+      } else {
+        showMessage(
+          "登録を受け付けました。確認メールが届いたら、メール内のリンクを開いてください。"
+        );
+      }
+    } catch (error) {
+      showMessage("登録できませんでした：" + error.message);
+    }
+  });
+
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email =
+      document.getElementById("login-email").value.trim();
+    const password =
+      document.getElementById("login-password").value;
+
+    showMessage("ログインしています…");
+
+    try {
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) throw error;
+
+      setLoggedIn(data.user);
+      loginForm.reset();
+    } catch (error) {
+      showMessage("ログインできませんでした：" + error.message);
+    }
+  });
+
+  logoutButton.addEventListener("click", async () => {
+    showMessage("ログアウトしています…");
+
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+
+      setLoggedIn(null);
+    } catch (error) {
+      showMessage("ログアウトできませんでした：" + error.message);
+    }
+  });
+
+  // ページを開いたとき、ログイン状態を確認
+  supabaseClient.auth.getUser().then(({ data, error }) => {
+    if (error) {
+      showMessage("ログイン状態を確認できませんでした。");
+      return;
+    }
+
+    setLoggedIn(data.user);
+  });
+
+  // ログイン状態の変化を画面に反映
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    setLoggedIn(session?.user ?? null);
+  });
+})();
+</script>
+
 </body>
 </html>
